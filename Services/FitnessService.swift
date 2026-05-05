@@ -15,6 +15,12 @@ final class FitnessService {
         repository.fetchWorkoutRecords()
     }
 
+    func workoutRecord(on date: Date = Date()) -> WorkoutSessionRecord? {
+        repository.fetchWorkoutRecords().first {
+            $0.date.isSameFitPlannerDay(as: date)
+        }
+    }
+
     func todayPlannedWorkout(referenceDate: Date = Date()) -> PlannedWorkoutDay? {
         repository.plannedWorkout(on: referenceDate)
     }
@@ -28,9 +34,9 @@ final class FitnessService {
     @discardableResult
     func completeWorkout(for plannedDay: PlannedWorkoutDay, date: Date = Date()) -> WorkoutSessionRecord {
         let logs = plannedDay.plannedExercises.map { plannedExercise in
-            let sets = (1...plannedExercise.targetSets).map { setNumber in
+            let sets = (0..<plannedExercise.targetSets).map { index in
                 SetLog(
-                    setNumber: setNumber,
+                    setNumber: index + 1,
                     weightInKilograms: plannedExercise.suggestedWeightInKilograms,
                     reps: plannedExercise.targetReps,
                     rpe: plannedExercise.targetRPE,
@@ -45,12 +51,27 @@ final class FitnessService {
             )
         }
 
-        let record = WorkoutSessionRecord(
+        return saveWorkoutSession(
             title: plannedDay.title,
             date: date,
             exerciseLogs: logs,
-            isCompleted: true,
             note: "由今日 mock 課表完成。"
+        )
+    }
+
+    @discardableResult
+    func saveWorkoutSession(
+        title: String,
+        date: Date = Date(),
+        exerciseLogs: [ExerciseLog],
+        note: String = "由今日訓練編輯流程儲存。"
+    ) -> WorkoutSessionRecord {
+        let record = WorkoutSessionRecord(
+            title: title,
+            date: date,
+            exerciseLogs: exerciseLogs,
+            isCompleted: true,
+            note: note
         )
 
         repository.saveWorkoutRecord(record)

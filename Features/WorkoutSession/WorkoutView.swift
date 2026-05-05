@@ -1,7 +1,9 @@
+import Foundation
 import SwiftUI
 
 struct WorkoutView: View {
     @StateObject private var viewModel: WorkoutViewModel
+    @State private var expandedExerciseLogIDs: Set<UUID> = []
 
     init(viewModel: WorkoutViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -20,6 +22,7 @@ struct WorkoutView: View {
             .navigationTitle("今日訓練")
             .onAppear {
                 viewModel.refresh()
+                expandFirstDraftIfNeeded()
             }
         }
     }
@@ -49,12 +52,39 @@ struct WorkoutView: View {
 
     @ViewBuilder
     private var plannedExercisesSection: some View {
-        if let plannedWorkoutDay = viewModel.plannedWorkoutDay, !plannedWorkoutDay.plannedExercises.isEmpty {
-            SectionHeaderView(title: "動作清單", subtitle: "建議重量、次數與強度")
+        if !viewModel.exerciseLogDrafts.isEmpty {
+            SectionHeaderView(title: "動作紀錄", subtitle: "展開動作後編輯每一組資料")
 
-            VStack(spacing: 12) {
-                ForEach(plannedWorkoutDay.plannedExercises) { plannedExercise in
-                    PlannedExerciseRowView(plannedExercise: plannedExercise)
+            VStack(spacing: 14) {
+                ForEach(viewModel.exerciseLogDrafts) { exerciseLog in
+                    VStack(spacing: 10) {
+                        Button {
+                            toggleExerciseLog(exerciseLog.id)
+                        } label: {
+                            WorkoutExerciseSummaryRow(
+                                exerciseLog: exerciseLog,
+                                plannedExercise: viewModel.plannedExercise(for: exerciseLog.exercise.id),
+                                isExpanded: expandedExerciseLogIDs.contains(exerciseLog.id)
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        if expandedExerciseLogIDs.contains(exerciseLog.id) {
+                            ExerciseLogEditorView(
+                                exerciseLog: exerciseLog,
+                                plannedExercise: viewModel.plannedExercise(for: exerciseLog.exercise.id),
+                                onAddSet: {
+                                    viewModel.addSet(to: exerciseLog.id)
+                                },
+                                onDeleteSet: { setID in
+                                    viewModel.deleteSet(setID, from: exerciseLog.id)
+                                },
+                                onUpdateSet: { updatedSet in
+                                    viewModel.updateSet(updatedSet, in: exerciseLog.id)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         } else {
@@ -78,44 +108,71 @@ struct WorkoutView: View {
         }
 
         Button {
-            viewModel.completeTodayWorkout()
+            viewModel.saveWorkoutSession()
         } label: {
-            Label(viewModel.hasCompletedToday ? "今日訓練已完成" : "完成今日訓練", systemImage: "checkmark.circle.fill")
+            Label(viewModel.hasCompletedToday ? "今日訓練已儲存" : "儲存今日訓練", systemImage: "square.and.arrow.down.fill")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
-        .disabled(viewModel.hasCompletedToday || viewModel.plannedWorkoutDay?.isRestDay != false)
+        .disabled(!viewModel.canSaveWorkoutSession)
+    }
+
+    private func toggleExerciseLog(_ id: UUID) {
+        if expandedExerciseLogIDs.contains(id) {
+            expandedExerciseLogIDs.remove(id)
+        } else {
+            expandedExerciseLogIDs.insert(id)
+        }
+    }
+
+    private func expandFirstDraftIfNeeded() {
+        guard expandedExerciseLogIDs.isEmpty, let firstExerciseLogID = viewModel.exerciseLogDrafts.first?.id else {
+            return
+        }
+
+        expandedExerciseLogIDs.insert(firstExerciseLogID)
     }
 }
 
-private struct PlannedExerciseRowView: View {
-    let plannedExercise: PlannedExercise
+private struct WorkoutExerciseSummaryRow: View {
+    let exerciseLog: ExerciseLog
+    let plannedExercise: PlannedExercise?
+    let isExpanded: Bool
+
+    private var completedSetCount: Int {
+        exerciseLog.sets.filter(\.isCompleted).count
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
+            HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(plannedExercise.exercise.name)
+                    Text(exerciseLog.exercise.name)
                         .font(.headline)
 
-                    Text("\(plannedExercise.exercise.primaryMuscleGroup) · \(plannedExercise.exercise.equipment)")
+                    Text("\(exerciseLog.exercise.primaryMuscleGroup) · \(exerciseLog.exercise.equipment)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                Text(NumberFormatting.weight(plannedExercise.suggestedWeightInKilograms))
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.primary)
+                Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                    .foregroundStyle(.blue)
+                    .font(.title3)
             }
 
             HStack(spacing: 8) {
-                metricPill(title: "組數", value: "\(plannedExercise.targetSets)")
-                metricPill(title: "次數", value: "\(plannedExercise.targetReps)")
-                metricPill(title: "RPE", value: plannedExercise.targetRPE.map { String(format: "%.1f", $0) } ?? "-")
-                metricPill(title: "RIR", value: plannedExercise.targetRIR.map(String.init) ?? "-")
+                metricPill(title: "已輸入", value: "\(exerciseLog.sets.count) 組")
+                metricPill(title: "已完成", value: "\(completedSetCount) 組")
+                metricPill(title: "總量", value: NumberFormatting.volume(exerciseLog.totalVolume))
+            }
+
+            if let plannedExercise {
+                Text("建議 \(plannedExercise.targetSets) 組 x \(plannedExercise.targetReps) 次 · \(NumberFormatting.weight(plannedExercise.suggestedWeightInKilograms))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
         .padding(16)
