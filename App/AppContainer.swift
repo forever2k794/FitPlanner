@@ -8,7 +8,7 @@ final class AppContainer: ObservableObject {
     let planGenerationService: PlanGenerationService
     let progressSummaryService: ProgressSummaryService
 
-    init(repository: FitnessRepository = InMemoryFitnessRepository()) {
+    init(repository: FitnessRepository = JSONFitnessRepository()) {
         self.repository = repository
         self.fitnessService = FitnessService(repository: repository)
         self.planGenerationService = PlanGenerationService(repository: repository)

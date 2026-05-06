@@ -1,6 +1,6 @@
 import Foundation
 
-struct SetLog: Identifiable, Hashable {
+struct SetLog: Identifiable, Hashable, Codable {
     let id: UUID
     var setNumber: Int
     var weightInKilograms: Double

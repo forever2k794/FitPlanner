@@ -1,6 +1,6 @@
 import Foundation
 
-struct ExerciseLog: Identifiable, Hashable {
+struct ExerciseLog: Identifiable, Hashable, Codable {
     let id: UUID
     var exercise: Exercise
     var sets: [SetLog]

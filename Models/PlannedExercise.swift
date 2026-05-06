@@ -1,6 +1,6 @@
 import Foundation
 
-struct PlannedExercise: Identifiable, Hashable {
+struct PlannedExercise: Identifiable, Hashable, Codable {
     let id: UUID
     var exercise: Exercise
     var targetSets: Int

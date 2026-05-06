@@ -1,6 +1,6 @@
 import Foundation
 
-struct GeneratedPlan: Identifiable, Hashable {
+struct GeneratedPlan: Identifiable, Hashable, Codable {
     let id: UUID
     var name: String
     var weekStartDate: Date

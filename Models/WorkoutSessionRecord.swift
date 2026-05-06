@@ -1,6 +1,6 @@
 import Foundation
 
-struct WorkoutSessionRecord: Identifiable, Hashable {
+struct WorkoutSessionRecord: Identifiable, Hashable, Codable {
     let id: UUID
     var title: String
     var date: Date

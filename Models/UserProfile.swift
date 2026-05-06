@@ -1,6 +1,6 @@
 import Foundation
 
-struct UserProfile: Identifiable, Hashable {
+struct UserProfile: Identifiable, Hashable, Codable {
     let id: UUID
     var name: String
     var heightInCentimeters: Double
