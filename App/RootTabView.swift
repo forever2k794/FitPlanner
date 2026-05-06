@@ -16,7 +16,8 @@ struct RootTabView: View {
 
             WorkoutView(
                 viewModel: WorkoutViewModel(
-                    fitnessService: container.fitnessService
+                    fitnessService: container.fitnessService,
+                    planGenerationService: container.planGenerationService
                 )
             )
             .tabItem {

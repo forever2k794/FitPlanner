@@ -9,9 +9,14 @@ final class WorkoutViewModel: ObservableObject {
     @Published var completionMessage: String?
 
     private let fitnessService: FitnessService
+    private let planGenerationService: PlanGenerationService
 
-    init(fitnessService: FitnessService) {
+    init(
+        fitnessService: FitnessService,
+        planGenerationService: PlanGenerationService
+    ) {
         self.fitnessService = fitnessService
+        self.planGenerationService = planGenerationService
         self.plannedWorkoutDay = nil
         self.exerciseLogDrafts = []
         self.hasCompletedToday = false
@@ -23,13 +28,8 @@ final class WorkoutViewModel: ObservableObject {
     }
 
     func refresh(rebuildDraft: Bool = false) {
-        plannedWorkoutDay = fitnessService.todayPlannedWorkout()
+        plannedWorkoutDay = planGenerationService.generateNextWorkout()
         hasCompletedToday = fitnessService.hasCompletedWorkout()
-
-        if let todayRecord = fitnessService.workoutRecord(), todayRecord.isCompleted {
-            exerciseLogDrafts = todayRecord.exerciseLogs
-            return
-        }
 
         if rebuildDraft || exerciseLogDrafts.isEmpty {
             exerciseLogDrafts = makeExerciseLogDrafts(from: plannedWorkoutDay)

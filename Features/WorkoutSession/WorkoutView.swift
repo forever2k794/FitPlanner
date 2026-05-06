@@ -197,7 +197,8 @@ private struct WorkoutExerciseSummaryRow: View {
     let container = AppContainer.preview()
     WorkoutView(
         viewModel: WorkoutViewModel(
-            fitnessService: container.fitnessService
+            fitnessService: container.fitnessService,
+            planGenerationService: container.planGenerationService
         )
     )
 }
