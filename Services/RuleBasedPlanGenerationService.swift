@@ -267,9 +267,14 @@ final class RuleBasedPlanGenerationService {
                 targetRPE: ExerciseProgressionRule.fatigueTargetRPE,
                 targetRIR: ExerciseProgressionRule.fatigueTargetRIR
             )
+            let fatigueText = fatigueReason(
+                completedAllSets: completedAllSets,
+                averageRPE: averageRPE,
+                averageRIR: averageRIR
+            )
             let explanation = ExercisePlanExplanation(
                 exerciseName: exercise.name,
-                reason: "上次出現疲勞訊號（\(fatigueReason(completedAllSets: completedAllSets, averageRPE: averageRPE, averageRIR: averageRIR)），重量由 \(formatWeight(averageWeight)) 下修 5% 至 \(formatWeight(suggestedWeight))，組數降至 \(targetSets) 組。",
+                reason: "上次出現疲勞訊號（\(fatigueText)），重量由 \(formatWeight(averageWeight)) 下修 5% 至 \(formatWeight(suggestedWeight))，組數降至 \(targetSets) 組。",
                 adjustment: .reduced
             )
 
