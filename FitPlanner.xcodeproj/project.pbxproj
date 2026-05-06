@@ -51,6 +51,9 @@
 		A1000000000000000000002A /* JSONFitnessRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* JSONFitnessRepository.swift */; };
 		A1000000000000000000002B /* LocalJSONUserProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002B /* LocalJSONUserProfileStore.swift */; };
 		A1000000000000000000002C /* SettingsEditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002C /* SettingsEditProfileView.swift */; };
+		A1000000000000000000002D /* TrainingSplitType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002D /* TrainingSplitType.swift */; };
+		A1000000000000000000002E /* ExerciseProgressionRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002E /* ExerciseProgressionRule.swift */; };
+		A1000000000000000000002F /* RuleBasedPlanGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002F /* RuleBasedPlanGenerationService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -99,6 +102,9 @@
 		A2000000000000000000002A /* JSONFitnessRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONFitnessRepository.swift; sourceTree = "<group>"; };
 		A2000000000000000000002B /* LocalJSONUserProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalJSONUserProfileStore.swift; sourceTree = "<group>"; };
 		A2000000000000000000002C /* SettingsEditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsEditProfileView.swift; sourceTree = "<group>"; };
+		A2000000000000000000002D /* TrainingSplitType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingSplitType.swift; sourceTree = "<group>"; };
+		A2000000000000000000002E /* ExerciseProgressionRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseProgressionRule.swift; sourceTree = "<group>"; };
+		A2000000000000000000002F /* RuleBasedPlanGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedPlanGenerationService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +153,8 @@
 				A20000000000000000000009 /* GeneratedPlan.swift */,
 				A2000000000000000000000A /* PlannedWorkoutDay.swift */,
 				A2000000000000000000000B /* PlannedExercise.swift */,
+				A2000000000000000000002D /* TrainingSplitType.swift */,
+				A2000000000000000000002E /* ExerciseProgressionRule.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -167,6 +175,7 @@
 				A2000000000000000000000E /* FitnessService.swift */,
 				A2000000000000000000000F /* PlanGenerationService.swift */,
 				A20000000000000000000010 /* ProgressSummaryService.swift */,
+				A2000000000000000000002F /* RuleBasedPlanGenerationService.swift */,
 				A20000000000000000000029 /* LocalJSONWorkoutRecordStore.swift */,
 				A2000000000000000000002B /* LocalJSONUserProfileStore.swift */,
 			);
@@ -371,12 +380,15 @@
 				A10000000000000000000009 /* GeneratedPlan.swift in Sources */,
 				A1000000000000000000000A /* PlannedWorkoutDay.swift in Sources */,
 				A1000000000000000000000B /* PlannedExercise.swift in Sources */,
+				A1000000000000000000002D /* TrainingSplitType.swift in Sources */,
+				A1000000000000000000002E /* ExerciseProgressionRule.swift in Sources */,
 				A1000000000000000000000C /* FitnessRepository.swift in Sources */,
 				A1000000000000000000000D /* InMemoryFitnessRepository.swift in Sources */,
 				A1000000000000000000002A /* JSONFitnessRepository.swift in Sources */,
 				A1000000000000000000000E /* FitnessService.swift in Sources */,
 				A1000000000000000000000F /* PlanGenerationService.swift in Sources */,
 				A10000000000000000000010 /* ProgressSummaryService.swift in Sources */,
+				A1000000000000000000002F /* RuleBasedPlanGenerationService.swift in Sources */,
 				A10000000000000000000029 /* LocalJSONWorkoutRecordStore.swift in Sources */,
 				A1000000000000000000002B /* LocalJSONUserProfileStore.swift in Sources */,
 				A10000000000000000000011 /* MockExercises.swift in Sources */,

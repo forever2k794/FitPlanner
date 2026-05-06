@@ -2,9 +2,14 @@ import Foundation
 
 final class PlanGenerationService {
     private let repository: FitnessRepository
+    private let ruleBasedPlanGenerationService: RuleBasedPlanGenerationService
 
-    init(repository: FitnessRepository) {
+    init(
+        repository: FitnessRepository,
+        ruleBasedPlanGenerationService: RuleBasedPlanGenerationService = RuleBasedPlanGenerationService()
+    ) {
         self.repository = repository
+        self.ruleBasedPlanGenerationService = ruleBasedPlanGenerationService
     }
 
     func currentPlan() -> GeneratedPlan {
@@ -17,5 +22,13 @@ final class PlanGenerationService {
 
     func nextPlannedWorkout(from date: Date = Date()) -> PlannedWorkoutDay? {
         repository.nextPlannedWorkout(from: date)
+    }
+
+    func generateNextWorkout() -> PlannedWorkoutDay {
+        ruleBasedPlanGenerationService.generateNextWorkout(
+            profile: repository.fetchUserProfile(),
+            workoutRecords: repository.fetchWorkoutRecords(),
+            exercises: repository.fetchExercises()
+        )
     }
 }
