@@ -2,14 +2,16 @@ import SwiftUI
 
 struct ProgressView: View {
     @StateObject private var viewModel: ProgressViewModel
+    private let fitnessService: FitnessService
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
 
-    init(viewModel: ProgressViewModel) {
+    init(viewModel: ProgressViewModel, fitnessService: FitnessService) {
         _viewModel = StateObject(wrappedValue: viewModel)
+        self.fitnessService = fitnessService
     }
 
     var body: some View {
@@ -51,6 +53,40 @@ struct ProgressView: View {
                             tint: .purple
                         )
                     }
+
+                    NavigationLink {
+                        WorkoutHistoryView(
+                            viewModel: WorkoutHistoryViewModel(
+                                fitnessService: fitnessService
+                            )
+                        )
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "clock.arrow.circlepath")
+                                .font(.title3)
+                                .foregroundStyle(.blue)
+                                .frame(width: 32, height: 32)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("查看過往訓練紀錄")
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+
+                                Text("檢視每次訓練的動作、組數與重量")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                        .padding(16)
+                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding()
             }
@@ -67,6 +103,7 @@ struct ProgressView: View {
     ProgressView(
         viewModel: ProgressViewModel(
             progressSummaryService: container.progressSummaryService
-        )
+        ),
+        fitnessService: container.fitnessService
     )
 }

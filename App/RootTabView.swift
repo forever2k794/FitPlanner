@@ -36,7 +36,8 @@ struct RootTabView: View {
             ProgressView(
                 viewModel: ProgressViewModel(
                     progressSummaryService: container.progressSummaryService
-                )
+                ),
+                fitnessService: container.fitnessService
             )
             .tabItem {
                 Label("進度", systemImage: "chart.bar.fill")
