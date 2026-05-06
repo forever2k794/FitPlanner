@@ -11,6 +11,10 @@ final class FitnessService {
         repository.fetchUserProfile()
     }
 
+    func saveUserProfile(_ profile: UserProfile) {
+        repository.saveUserProfile(profile)
+    }
+
     func workoutRecords() -> [WorkoutSessionRecord] {
         repository.fetchWorkoutRecords()
     }

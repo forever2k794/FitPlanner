@@ -5,6 +5,7 @@ protocol FitnessRepository: AnyObject {
     func fetchExercises() -> [Exercise]
     func fetchWorkoutRecords() -> [WorkoutSessionRecord]
     func fetchGeneratedPlan() -> GeneratedPlan
+    func saveUserProfile(_ profile: UserProfile)
     func saveWorkoutRecord(_ record: WorkoutSessionRecord)
     func updateWorkoutRecord(_ record: WorkoutSessionRecord)
     func plannedWorkout(on date: Date) -> PlannedWorkoutDay?

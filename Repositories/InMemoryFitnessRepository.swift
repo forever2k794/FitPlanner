@@ -34,6 +34,10 @@ final class InMemoryFitnessRepository: FitnessRepository {
         generatedPlan
     }
 
+    func saveUserProfile(_ profile: UserProfile) {
+        userProfile = profile
+    }
+
     func saveWorkoutRecord(_ record: WorkoutSessionRecord) {
         workoutRecords.append(record)
     }

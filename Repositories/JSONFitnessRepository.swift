@@ -1,25 +1,28 @@
 import Foundation
 
 final class JSONFitnessRepository: FitnessRepository {
-    private let userProfile: UserProfile
+    private let fallbackUserProfile: UserProfile
     private let exercises: [Exercise]
     private let generatedPlan: GeneratedPlan
+    private let userProfileStore: LocalJSONUserProfileStore
     private let workoutRecordStore: LocalJSONWorkoutRecordStore
 
     init(
         userProfile: UserProfile = MockUserProfile.current,
         exercises: [Exercise] = MockExercises.all,
         generatedPlan: GeneratedPlan = MockGeneratedPlan.nextWeekPlan,
+        userProfileStore: LocalJSONUserProfileStore = LocalJSONUserProfileStore(),
         workoutRecordStore: LocalJSONWorkoutRecordStore = LocalJSONWorkoutRecordStore()
     ) {
-        self.userProfile = userProfile
+        self.fallbackUserProfile = userProfile
         self.exercises = exercises
         self.generatedPlan = generatedPlan
+        self.userProfileStore = userProfileStore
         self.workoutRecordStore = workoutRecordStore
     }
 
     func fetchUserProfile() -> UserProfile {
-        userProfile
+        userProfileStore.loadProfile() ?? fallbackUserProfile
     }
 
     func fetchExercises() -> [Exercise] {
@@ -33,6 +36,10 @@ final class JSONFitnessRepository: FitnessRepository {
 
     func fetchGeneratedPlan() -> GeneratedPlan {
         generatedPlan
+    }
+
+    func saveUserProfile(_ profile: UserProfile) {
+        userProfileStore.saveProfile(profile)
     }
 
     func saveWorkoutRecord(_ record: WorkoutSessionRecord) {

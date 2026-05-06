@@ -18,6 +18,19 @@ struct SettingsView: View {
                     settingsRow(title: "經驗程度", value: viewModel.userProfile.experienceLevel)
                     settingsRow(title: "每週目標訓練天數", value: "\(viewModel.userProfile.weeklyTargetTrainingDays) 天")
                 }
+
+                Section {
+                    NavigationLink {
+                        SettingsEditProfileView(
+                            profile: viewModel.userProfile,
+                            onSave: { updatedProfile in
+                                viewModel.saveUserProfile(updatedProfile)
+                            }
+                        )
+                    } label: {
+                        Label("編輯個人資料", systemImage: "person.crop.circle.badge.pencil")
+                    }
+                }
             }
             .navigationTitle("設定")
             .onAppear {

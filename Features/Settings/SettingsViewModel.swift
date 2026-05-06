@@ -15,4 +15,9 @@ final class SettingsViewModel: ObservableObject {
     func refresh() {
         userProfile = fitnessService.userProfile()
     }
+
+    func saveUserProfile(_ profile: UserProfile) {
+        fitnessService.saveUserProfile(profile)
+        refresh()
+    }
 }
