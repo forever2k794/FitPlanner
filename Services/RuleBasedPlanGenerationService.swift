@@ -365,20 +365,20 @@ final class RuleBasedPlanGenerationService {
     }
 
     private func summaryText(
-        for splitType: TrainingSplitType,
+        for selectedSplitType: TrainingSplitType,
         profile: UserProfile,
         latestRecord: WorkoutSessionRecord?
     ) -> String {
         guard let latestRecord else {
-            return "目前沒有歷史訓練紀錄，因此先安排「\(splitType.displayName)」作為起始課表。"
+            return "目前沒有歷史訓練紀錄，因此先安排「\(selectedSplitType.displayName)」作為起始課表。"
         }
 
         let latestSplit = splitType(from: latestRecord)
-        return "根據最近一次「\(latestSplit.displayName)」訓練，下一次安排「\(splitType.displayName)」。"
+        return "根據最近一次「\(latestSplit.displayName)」訓練，下一次安排「\(selectedSplitType.displayName)」。"
     }
 
     private func splitReasonText(
-        for splitType: TrainingSplitType,
+        for selectedSplitType: TrainingSplitType,
         weeklyTargetTrainingDays: Int,
         latestRecord: WorkoutSessionRecord?
     ) -> String {
@@ -386,10 +386,10 @@ final class RuleBasedPlanGenerationService {
 
         if let latestRecord {
             let latestSplit = splitType(from: latestRecord)
-            return "每週目標 \(weeklyTargetTrainingDays) 天，使用\(strategy)。最近一次推估為「\(latestSplit.displayName)」，所以輪替到「\(splitType.displayName)」。"
+            return "每週目標 \(weeklyTargetTrainingDays) 天，使用\(strategy)。最近一次推估為「\(latestSplit.displayName)」，所以輪替到「\(selectedSplitType.displayName)」。"
         }
 
-        return "每週目標 \(weeklyTargetTrainingDays) 天，使用\(strategy)。因尚無歷史紀錄，先從「\(splitType.displayName)」開始。"
+        return "每週目標 \(weeklyTargetTrainingDays) 天，使用\(strategy)。因尚無歷史紀錄，先從「\(selectedSplitType.displayName)」開始。"
     }
 
     private func historyReferenceText(from records: [WorkoutSessionRecord]) -> String {
