@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 final class WorkoutViewModel: ObservableObject {
     @Published private(set) var plannedWorkoutDay: PlannedWorkoutDay?
+    @Published private(set) var planGenerationExplanation: PlanGenerationExplanation?
     @Published private(set) var exerciseLogDrafts: [ExerciseLog]
     @Published private(set) var hasCompletedToday: Bool
     @Published var completionMessage: String?
@@ -18,6 +19,7 @@ final class WorkoutViewModel: ObservableObject {
         self.fitnessService = fitnessService
         self.planGenerationService = planGenerationService
         self.plannedWorkoutDay = nil
+        self.planGenerationExplanation = nil
         self.exerciseLogDrafts = []
         self.hasCompletedToday = false
         refresh(rebuildDraft: true)
@@ -28,7 +30,9 @@ final class WorkoutViewModel: ObservableObject {
     }
 
     func refresh(rebuildDraft: Bool = false) {
-        plannedWorkoutDay = planGenerationService.generateNextWorkout()
+        let result = planGenerationService.generateNextWorkoutWithExplanation()
+        plannedWorkoutDay = result.plannedWorkoutDay
+        planGenerationExplanation = result.explanation
         hasCompletedToday = fitnessService.hasCompletedWorkout()
 
         if rebuildDraft || exerciseLogDrafts.isEmpty {

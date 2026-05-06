@@ -31,4 +31,12 @@ final class PlanGenerationService {
             exercises: repository.fetchExercises()
         )
     }
+
+    func generateNextWorkoutWithExplanation() -> (plannedWorkoutDay: PlannedWorkoutDay, explanation: PlanGenerationExplanation) {
+        ruleBasedPlanGenerationService.generateNextWorkoutWithExplanation(
+            profile: repository.fetchUserProfile(),
+            workoutRecords: repository.fetchWorkoutRecords(),
+            exercises: repository.fetchExercises()
+        )
+    }
 }

@@ -14,6 +14,7 @@ struct WorkoutView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
+                    explanationSection
                     plannedExercisesSection
                     completionSection
                 }
@@ -47,6 +48,72 @@ struct WorkoutView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         } else {
             SectionHeaderView(title: "今日課表", subtitle: Date().fitPlannerMediumDate)
+        }
+    }
+
+    @ViewBuilder
+    private var explanationSection: some View {
+        if let explanation = viewModel.planGenerationExplanation {
+            DisclosureGroup {
+                VStack(alignment: .leading, spacing: 14) {
+                    explanationText(explanation.summary)
+                    explanationText(explanation.splitReason)
+                    explanationText(explanation.historyReference)
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("動作調整")
+                            .font(.subheadline.weight(.semibold))
+
+                        ForEach(explanation.exerciseReasons) { reason in
+                            HStack(alignment: .top, spacing: 10) {
+                                Text(reason.adjustment.displayName)
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(adjustmentColor(for: reason.adjustment))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 5)
+                                    .background(adjustmentColor(for: reason.adjustment).opacity(0.12), in: Capsule())
+
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(reason.exerciseName)
+                                        .font(.subheadline.weight(.semibold))
+
+                                    Text(reason.reason)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.top, 10)
+            } label: {
+                Label("為什麼安排這份課表？", systemImage: "lightbulb.fill")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+            }
+            .padding(16)
+            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+    }
+
+    private func explanationText(_ text: String) -> some View {
+        Text(text)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func adjustmentColor(for adjustment: PlanAdjustmentType) -> Color {
+        switch adjustment {
+        case .progressed:
+            return .green
+        case .maintained:
+            return .blue
+        case .reduced:
+            return .orange
+        case .defaulted:
+            return .secondary
         }
     }
 
