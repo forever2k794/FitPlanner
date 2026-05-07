@@ -8,6 +8,8 @@ protocol FitnessRepository: AnyObject {
     func saveUserProfile(_ profile: UserProfile)
     func saveWorkoutRecord(_ record: WorkoutSessionRecord)
     func updateWorkoutRecord(_ record: WorkoutSessionRecord)
+    func deleteWorkoutRecord(id: UUID)
+    func canDeleteWorkoutRecord(id: UUID) -> Bool
     func plannedWorkout(on date: Date) -> PlannedWorkoutDay?
     func nextPlannedWorkout(from date: Date) -> PlannedWorkoutDay?
 }

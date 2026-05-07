@@ -30,6 +30,15 @@ struct WorkoutHistoryView: View {
                             )
                         }
                         .buttonStyle(.plain)
+                        .swipeActions {
+                            if viewModel.canDelete(record) {
+                                Button(role: .destructive) {
+                                    viewModel.delete(record: record)
+                                } label: {
+                                    Label("刪除", systemImage: "trash")
+                                }
+                            }
+                        }
                     }
                 }
             }

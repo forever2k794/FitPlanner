@@ -58,6 +58,16 @@ final class JSONFitnessRepository: FitnessRepository {
         saveWorkoutRecord(record)
     }
 
+    func deleteWorkoutRecord(id: UUID) {
+        var jsonRecords = workoutRecordStore.loadRecords()
+        jsonRecords.removeAll { $0.id == id }
+        workoutRecordStore.saveRecords(jsonRecords.sorted { $0.date > $1.date })
+    }
+
+    func canDeleteWorkoutRecord(id: UUID) -> Bool {
+        workoutRecordStore.loadRecords().contains { $0.id == id }
+    }
+
     func plannedWorkout(on date: Date) -> PlannedWorkoutDay? {
         generatedPlan.days.first { $0.date.isSameFitPlannerDay(as: date) }
     }

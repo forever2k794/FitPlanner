@@ -51,6 +51,14 @@ final class InMemoryFitnessRepository: FitnessRepository {
         workoutRecords[index] = record
     }
 
+    func deleteWorkoutRecord(id: UUID) {
+        workoutRecords.removeAll { $0.id == id }
+    }
+
+    func canDeleteWorkoutRecord(id: UUID) -> Bool {
+        workoutRecords.contains { $0.id == id }
+    }
+
     func plannedWorkout(on date: Date) -> PlannedWorkoutDay? {
         generatedPlan.days.first { $0.date.isSameFitPlannerDay(as: date) }
     }

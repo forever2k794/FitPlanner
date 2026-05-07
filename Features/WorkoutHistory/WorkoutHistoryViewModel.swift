@@ -17,6 +17,19 @@ final class WorkoutHistoryViewModel: ObservableObject {
         records = fitnessService.workoutRecords().sorted { $0.date > $1.date }
     }
 
+    func delete(record: WorkoutSessionRecord) {
+        guard canDelete(record) else {
+            return
+        }
+
+        fitnessService.deleteWorkoutRecord(id: record.id)
+        refresh()
+    }
+
+    func canDelete(_ record: WorkoutSessionRecord) -> Bool {
+        fitnessService.canDeleteWorkoutRecord(id: record.id)
+    }
+
     func exerciseCount(for record: WorkoutSessionRecord) -> Int {
         record.exerciseLogs.count
     }

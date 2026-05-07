@@ -19,6 +19,14 @@ final class FitnessService {
         repository.fetchWorkoutRecords()
     }
 
+    func deleteWorkoutRecord(id: UUID) {
+        repository.deleteWorkoutRecord(id: id)
+    }
+
+    func canDeleteWorkoutRecord(id: UUID) -> Bool {
+        repository.canDeleteWorkoutRecord(id: id)
+    }
+
     func workoutRecord(on date: Date = Date()) -> WorkoutSessionRecord? {
         repository.fetchWorkoutRecords().first {
             $0.date.isSameFitPlannerDay(as: date)
