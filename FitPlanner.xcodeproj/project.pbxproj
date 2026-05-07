@@ -55,6 +55,8 @@
 		A1000000000000000000002E /* ExerciseProgressionRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002E /* ExerciseProgressionRule.swift */; };
 		A1000000000000000000002F /* RuleBasedPlanGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002F /* RuleBasedPlanGenerationService.swift */; };
 		A10000000000000000000030 /* PlanGenerationExplanation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000030 /* PlanGenerationExplanation.swift */; };
+		A10000000000000000000031 /* FitPlannerBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000031 /* FitPlannerBackup.swift */; };
+		A10000000000000000000032 /* BackupExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000032 /* BackupExportService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -107,6 +109,8 @@
 		A2000000000000000000002E /* ExerciseProgressionRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseProgressionRule.swift; sourceTree = "<group>"; };
 		A2000000000000000000002F /* RuleBasedPlanGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedPlanGenerationService.swift; sourceTree = "<group>"; };
 		A20000000000000000000030 /* PlanGenerationExplanation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanGenerationExplanation.swift; sourceTree = "<group>"; };
+		A20000000000000000000031 /* FitPlannerBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitPlannerBackup.swift; sourceTree = "<group>"; };
+		A20000000000000000000032 /* BackupExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupExportService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +162,7 @@
 				A2000000000000000000002D /* TrainingSplitType.swift */,
 				A2000000000000000000002E /* ExerciseProgressionRule.swift */,
 				A20000000000000000000030 /* PlanGenerationExplanation.swift */,
+				A20000000000000000000031 /* FitPlannerBackup.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -181,6 +186,7 @@
 				A2000000000000000000002F /* RuleBasedPlanGenerationService.swift */,
 				A20000000000000000000029 /* LocalJSONWorkoutRecordStore.swift */,
 				A2000000000000000000002B /* LocalJSONUserProfileStore.swift */,
+				A20000000000000000000032 /* BackupExportService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -386,6 +392,7 @@
 				A1000000000000000000002D /* TrainingSplitType.swift in Sources */,
 				A1000000000000000000002E /* ExerciseProgressionRule.swift in Sources */,
 				A10000000000000000000030 /* PlanGenerationExplanation.swift in Sources */,
+				A10000000000000000000031 /* FitPlannerBackup.swift in Sources */,
 				A1000000000000000000000C /* FitnessRepository.swift in Sources */,
 				A1000000000000000000000D /* InMemoryFitnessRepository.swift in Sources */,
 				A1000000000000000000002A /* JSONFitnessRepository.swift in Sources */,
@@ -395,6 +402,7 @@
 				A1000000000000000000002F /* RuleBasedPlanGenerationService.swift in Sources */,
 				A10000000000000000000029 /* LocalJSONWorkoutRecordStore.swift in Sources */,
 				A1000000000000000000002B /* LocalJSONUserProfileStore.swift in Sources */,
+				A10000000000000000000032 /* BackupExportService.swift in Sources */,
 				A10000000000000000000011 /* MockExercises.swift in Sources */,
 				A10000000000000000000012 /* MockUserProfile.swift in Sources */,
 				A10000000000000000000013 /* MockWorkoutRecords.swift in Sources */,

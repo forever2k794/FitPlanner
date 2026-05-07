@@ -19,7 +19,7 @@ struct SettingsView: View {
                     settingsRow(title: "每週目標訓練天數", value: "\(viewModel.userProfile.weeklyTargetTrainingDays) 天")
                 }
 
-                Section {
+                Section("資料管理") {
                     NavigationLink {
                         SettingsEditProfileView(
                             profile: viewModel.userProfile,
@@ -29,6 +29,24 @@ struct SettingsView: View {
                         )
                     } label: {
                         Label("編輯個人資料", systemImage: "person.crop.circle.badge.pencil")
+                    }
+
+                    Button {
+                        viewModel.prepareBackupExport()
+                    } label: {
+                        Label("準備匯出備份", systemImage: "doc.badge.gearshape")
+                    }
+
+                    if let backupFileURL = viewModel.backupFileURL {
+                        ShareLink(item: backupFileURL) {
+                            Label("分享備份檔", systemImage: "square.and.arrow.up")
+                        }
+                    }
+
+                    if let exportErrorMessage = viewModel.exportErrorMessage {
+                        Text(exportErrorMessage)
+                            .font(.caption)
+                            .foregroundStyle(.red)
                     }
                 }
             }
@@ -54,7 +72,8 @@ struct SettingsView: View {
     let container = AppContainer.preview()
     SettingsView(
         viewModel: SettingsViewModel(
-            fitnessService: container.fitnessService
+            fitnessService: container.fitnessService,
+            backupExportService: container.backupExportService
         )
     )
 }
