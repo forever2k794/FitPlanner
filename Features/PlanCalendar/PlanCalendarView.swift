@@ -126,7 +126,7 @@ struct PlanCalendarView: View {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: plannedWorkout.isRestDay ? "moon.zzz.fill" : "calendar.badge.clock")
                     .font(.title3)
-                    .foregroundStyle(plannedWorkout.isRestDay ? .secondary : .blue)
+                    .foregroundColor(plannedWorkout.isRestDay ? .secondary : .blue)
                     .frame(width: 28, height: 28)
 
                 VStack(alignment: .leading, spacing: 4) {
