@@ -27,6 +27,14 @@ final class FitnessService {
         repository.canDeleteWorkoutRecord(id: id)
     }
 
+    func updateWorkoutRecord(_ record: WorkoutSessionRecord) {
+        repository.updateWorkoutRecord(record)
+    }
+
+    func canEditWorkoutRecord(id: UUID) -> Bool {
+        repository.canEditWorkoutRecord(id: id)
+    }
+
     func workoutRecord(on date: Date = Date()) -> WorkoutSessionRecord? {
         repository.fetchWorkoutRecords().first {
             $0.date.isSameFitPlannerDay(as: date)

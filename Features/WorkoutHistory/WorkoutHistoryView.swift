@@ -19,7 +19,9 @@ struct WorkoutHistoryView: View {
                 } else {
                     ForEach(viewModel.records) { record in
                         NavigationLink {
-                            WorkoutHistoryDetailView(record: record)
+                            WorkoutHistoryDetailView(
+                                viewModel: viewModel.detailViewModel(for: record)
+                            )
                         } label: {
                             WorkoutHistoryRecordRow(
                                 record: record,

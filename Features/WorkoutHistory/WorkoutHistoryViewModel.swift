@@ -30,6 +30,13 @@ final class WorkoutHistoryViewModel: ObservableObject {
         fitnessService.canDeleteWorkoutRecord(id: record.id)
     }
 
+    func detailViewModel(for record: WorkoutSessionRecord) -> WorkoutHistoryDetailViewModel {
+        WorkoutHistoryDetailViewModel(
+            session: record,
+            fitnessService: fitnessService
+        )
+    }
+
     func exerciseCount(for record: WorkoutSessionRecord) -> Int {
         record.exerciseLogs.count
     }

@@ -2,7 +2,15 @@ import Foundation
 import SwiftUI
 
 struct WorkoutHistoryDetailView: View {
-    let record: WorkoutSessionRecord
+    @StateObject private var viewModel: WorkoutHistoryDetailViewModel
+
+    init(viewModel: WorkoutHistoryDetailViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    private var record: WorkoutSessionRecord {
+        viewModel.session
+    }
 
     private var completedSetCount: Int {
         record.exerciseLogs.reduce(0) { count, exerciseLog in
@@ -20,12 +28,29 @@ struct WorkoutHistoryDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 summarySection
+                editAvailabilitySection
                 exerciseLogsSection
             }
             .padding()
         }
         .navigationTitle("紀錄詳情")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                if viewModel.canEdit {
+                    NavigationLink {
+                        WorkoutSessionEditView(
+                            session: viewModel.session,
+                            onSave: { updatedSession in
+                                viewModel.save(updatedSession)
+                            }
+                        )
+                    } label: {
+                        Text("編輯")
+                    }
+                }
+            }
+        }
     }
 
     private var summarySection: some View {
@@ -48,6 +73,18 @@ struct WorkoutHistoryDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private var editAvailabilitySection: some View {
+        if !viewModel.canEdit {
+            Text("範例紀錄不可編輯")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
     }
 
     private var exerciseLogsSection: some View {
@@ -135,6 +172,11 @@ struct WorkoutHistoryDetailView: View {
     let record = container.fitnessService.workoutRecords().first!
 
     NavigationStack {
-        WorkoutHistoryDetailView(record: record)
+        WorkoutHistoryDetailView(
+            viewModel: WorkoutHistoryDetailViewModel(
+                session: record,
+                fitnessService: container.fitnessService
+            )
+        )
     }
 }

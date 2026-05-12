@@ -10,6 +10,7 @@ protocol FitnessRepository: AnyObject {
     func updateWorkoutRecord(_ record: WorkoutSessionRecord)
     func deleteWorkoutRecord(id: UUID)
     func canDeleteWorkoutRecord(id: UUID) -> Bool
+    func canEditWorkoutRecord(id: UUID) -> Bool
     func plannedWorkout(on date: Date) -> PlannedWorkoutDay?
     func nextPlannedWorkout(from date: Date) -> PlannedWorkoutDay?
 }

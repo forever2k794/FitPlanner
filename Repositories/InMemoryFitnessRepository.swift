@@ -44,7 +44,6 @@ final class InMemoryFitnessRepository: FitnessRepository {
 
     func updateWorkoutRecord(_ record: WorkoutSessionRecord) {
         guard let index = workoutRecords.firstIndex(where: { $0.id == record.id }) else {
-            saveWorkoutRecord(record)
             return
         }
 
@@ -56,6 +55,10 @@ final class InMemoryFitnessRepository: FitnessRepository {
     }
 
     func canDeleteWorkoutRecord(id: UUID) -> Bool {
+        workoutRecords.contains { $0.id == id }
+    }
+
+    func canEditWorkoutRecord(id: UUID) -> Bool {
         workoutRecords.contains { $0.id == id }
     }
 

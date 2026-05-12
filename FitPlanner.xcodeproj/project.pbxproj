@@ -57,6 +57,8 @@
 		A10000000000000000000030 /* PlanGenerationExplanation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000030 /* PlanGenerationExplanation.swift */; };
 		A10000000000000000000031 /* FitPlannerBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000031 /* FitPlannerBackup.swift */; };
 		A10000000000000000000032 /* BackupExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000032 /* BackupExportService.swift */; };
+		A10000000000000000000033 /* WorkoutHistoryDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000033 /* WorkoutHistoryDetailViewModel.swift */; };
+		A10000000000000000000034 /* WorkoutSessionEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000034 /* WorkoutSessionEditView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -111,6 +113,8 @@
 		A20000000000000000000030 /* PlanGenerationExplanation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanGenerationExplanation.swift; sourceTree = "<group>"; };
 		A20000000000000000000031 /* FitPlannerBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitPlannerBackup.swift; sourceTree = "<group>"; };
 		A20000000000000000000032 /* BackupExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupExportService.swift; sourceTree = "<group>"; };
+		A20000000000000000000033 /* WorkoutHistoryDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryDetailViewModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000034 /* WorkoutSessionEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSessionEditView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -241,6 +245,8 @@
 				A20000000000000000000026 /* WorkoutHistoryView.swift */,
 				A20000000000000000000027 /* WorkoutHistoryViewModel.swift */,
 				A20000000000000000000028 /* WorkoutHistoryDetailView.swift */,
+				A20000000000000000000033 /* WorkoutHistoryDetailViewModel.swift */,
+				A20000000000000000000034 /* WorkoutSessionEditView.swift */,
 			);
 			path = WorkoutHistory;
 			sourceTree = "<group>";
@@ -416,6 +422,8 @@
 				A10000000000000000000026 /* WorkoutHistoryView.swift in Sources */,
 				A10000000000000000000027 /* WorkoutHistoryViewModel.swift in Sources */,
 				A10000000000000000000028 /* WorkoutHistoryDetailView.swift in Sources */,
+				A10000000000000000000033 /* WorkoutHistoryDetailViewModel.swift in Sources */,
+				A10000000000000000000034 /* WorkoutSessionEditView.swift in Sources */,
 				A10000000000000000000019 /* PlanCalendarView.swift in Sources */,
 				A1000000000000000000001A /* PlanCalendarViewModel.swift in Sources */,
 				A1000000000000000000001B /* ProgressView.swift in Sources */,

@@ -55,7 +55,13 @@ final class JSONFitnessRepository: FitnessRepository {
     }
 
     func updateWorkoutRecord(_ record: WorkoutSessionRecord) {
-        saveWorkoutRecord(record)
+        var jsonRecords = workoutRecordStore.loadRecords()
+        guard let existingIndex = jsonRecords.firstIndex(where: { $0.id == record.id }) else {
+            return
+        }
+
+        jsonRecords[existingIndex] = record
+        workoutRecordStore.saveRecords(jsonRecords.sorted { $0.date > $1.date })
     }
 
     func deleteWorkoutRecord(id: UUID) {
@@ -65,6 +71,10 @@ final class JSONFitnessRepository: FitnessRepository {
     }
 
     func canDeleteWorkoutRecord(id: UUID) -> Bool {
+        workoutRecordStore.loadRecords().contains { $0.id == id }
+    }
+
+    func canEditWorkoutRecord(id: UUID) -> Bool {
         workoutRecordStore.loadRecords().contains { $0.id == id }
     }
 
