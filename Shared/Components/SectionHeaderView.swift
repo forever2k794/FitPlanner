@@ -26,6 +26,6 @@ struct SectionHeaderView: View {
 }
 
 #Preview {
-    SectionHeaderView(title: "下一次訓練", subtitle: "依 mock 課表產生")
+    SectionHeaderView(title: "下一次訓練", subtitle: "依本地課表資料產生")
         .padding()
 }

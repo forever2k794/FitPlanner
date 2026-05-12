@@ -32,6 +32,9 @@ struct WorkoutView: View {
     private var headerSection: some View {
         if let plannedWorkoutDay = viewModel.plannedWorkoutDay {
             VStack(alignment: .leading, spacing: 8) {
+                Text("下一次建議課表")
+                    .font(.headline)
+
                 Text(plannedWorkoutDay.date.fitPlannerMediumDate)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
@@ -157,7 +160,7 @@ struct WorkoutView: View {
         } else {
             EmptyStateView(
                 title: "今天是休息日",
-                message: "目前 mock 課表沒有安排訓練，建議保留恢復與活動度練習。",
+                message: "目前沒有安排訓練，建議保留恢復、伸展或輕度活動。",
                 systemImage: "moon.zzz.fill"
             )
         }
@@ -168,16 +171,16 @@ struct WorkoutView: View {
         if let message = viewModel.completionMessage {
             Text(message)
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(viewModel.hasCompletedToday ? .green : .secondary)
+                .foregroundStyle(feedbackColor(for: viewModel.completionMessageStyle))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(12)
-                .background(.green.opacity(viewModel.hasCompletedToday ? 0.12 : 0.05), in: RoundedRectangle(cornerRadius: 8))
+                .background(feedbackColor(for: viewModel.completionMessageStyle).opacity(0.12), in: RoundedRectangle(cornerRadius: 8))
         }
 
         Button {
             viewModel.saveWorkoutSession()
         } label: {
-            Label(viewModel.hasCompletedToday ? "今日訓練已儲存" : "儲存今日訓練", systemImage: "square.and.arrow.down.fill")
+            Label(viewModel.hasCompletedToday ? "本次訓練已儲存" : "儲存本次訓練", systemImage: "square.and.arrow.down.fill")
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
@@ -199,6 +202,17 @@ struct WorkoutView: View {
         }
 
         expandedExerciseLogIDs.insert(firstExerciseLogID)
+    }
+
+    private func feedbackColor(for style: WorkoutFeedbackStyle) -> Color {
+        switch style {
+        case .success:
+            return .green
+        case .warning:
+            return .orange
+        case .info:
+            return .secondary
+        }
     }
 }
 

@@ -48,7 +48,7 @@ struct DashboardView: View {
 
     @ViewBuilder
     private var nextWorkoutSection: some View {
-        SectionHeaderView(title: "下一次訓練", subtitle: "由本地 mock 課表產生")
+        SectionHeaderView(title: "下一次訓練", subtitle: "依本地課表資料產生")
 
         if let nextWorkout = viewModel.summary.nextWorkout {
             VStack(alignment: .leading, spacing: 10) {
@@ -82,7 +82,7 @@ struct DashboardView: View {
         } else {
             EmptyStateView(
                 title: "沒有下一次訓練",
-                message: "目前 mock 課表中沒有可顯示的下一次訓練。",
+                message: "目前沒有可顯示的下一次訓練。你仍可從今日訓練建立新紀錄。",
                 systemImage: "calendar.badge.exclamationmark"
             )
         }

@@ -60,6 +60,12 @@ struct SettingsEditProfileView: View {
                     }
                 }
             }
+
+            if !canSave {
+                Text("請填寫名稱與訓練目標後再儲存。")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
         }
         .navigationTitle("編輯個人資料")
         .navigationBarTitleDisplayMode(.inline)
@@ -75,9 +81,14 @@ struct SettingsEditProfileView: View {
                     onSave(updatedProfile())
                     dismiss()
                 }
-                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(!canSave)
             }
         }
+    }
+
+    private var canSave: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        !goal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private func updatedProfile() -> UserProfile {

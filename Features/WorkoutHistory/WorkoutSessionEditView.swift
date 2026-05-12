@@ -29,20 +29,28 @@ struct WorkoutSessionEditView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     SectionHeaderView(title: "動作與組數", subtitle: "修改每一組的重量、次數與強度")
 
-                    ForEach(draftSession.exerciseLogs) { exerciseLog in
-                        ExerciseLogEditorView(
-                            exerciseLog: exerciseLog,
-                            plannedExercise: nil,
-                            onAddSet: {
-                                addSet(to: exerciseLog.id)
-                            },
-                            onDeleteSet: { setID in
-                                deleteSet(setID, from: exerciseLog.id)
-                            },
-                            onUpdateSet: { updatedSet in
-                                updateSet(updatedSet, in: exerciseLog.id)
-                            }
+                    if draftSession.exerciseLogs.isEmpty {
+                        EmptyStateView(
+                            title: "沒有動作紀錄",
+                            message: "這筆訓練目前沒有可編輯的動作資料。",
+                            systemImage: "list.bullet.clipboard"
                         )
+                    } else {
+                        ForEach(draftSession.exerciseLogs) { exerciseLog in
+                            ExerciseLogEditorView(
+                                exerciseLog: exerciseLog,
+                                plannedExercise: nil,
+                                onAddSet: {
+                                    addSet(to: exerciseLog.id)
+                                },
+                                onDeleteSet: { setID in
+                                    deleteSet(setID, from: exerciseLog.id)
+                                },
+                                onUpdateSet: { updatedSet in
+                                    updateSet(updatedSet, in: exerciseLog.id)
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -62,7 +70,10 @@ struct WorkoutSessionEditView: View {
                     onSave(draftSession)
                     dismiss()
                 }
-                .disabled(draftSession.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(
+                    draftSession.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                    draftSession.exerciseLogs.isEmpty
+                )
             }
         }
     }

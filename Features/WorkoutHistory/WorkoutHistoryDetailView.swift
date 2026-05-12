@@ -28,6 +28,7 @@ struct WorkoutHistoryDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 summarySection
+                saveStatusSection
                 editAvailabilitySection
                 exerciseLogsSection
             }
@@ -73,6 +74,18 @@ struct WorkoutHistoryDetailView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private var saveStatusSection: some View {
+        if let saveMessage = viewModel.saveMessage {
+            Text(saveMessage)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(viewModel.didSaveSuccessfully ? .green : .orange)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background((viewModel.didSaveSuccessfully ? Color.green : Color.orange).opacity(0.12), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
     }
 
     @ViewBuilder

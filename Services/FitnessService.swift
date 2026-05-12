@@ -79,7 +79,7 @@ final class FitnessService {
             title: plannedDay.title,
             date: date,
             exerciseLogs: logs,
-            note: "由今日 mock 課表完成。"
+            note: "由今日建議課表快速完成。"
         )
     }
 

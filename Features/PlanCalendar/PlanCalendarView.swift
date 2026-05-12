@@ -91,6 +91,8 @@ struct PlanCalendarView: View {
             legendItem(color: .blue, title: "建議課表")
 
             Spacer()
+
+            Text("今天藍框，選取日期藍底")
         }
         .font(.caption)
         .foregroundStyle(.secondary)
@@ -106,7 +108,7 @@ struct PlanCalendarView: View {
             if viewModel.selectedWorkoutRecords.isEmpty {
                 EmptyStateView(
                     title: "這天沒有訓練紀錄",
-                    message: "若有建議課表，會顯示在下方供你參考。",
+                    message: "這天尚未儲存訓練紀錄；若有建議課表，會顯示在下方供你參考。",
                     systemImage: "calendar"
                 )
             } else {

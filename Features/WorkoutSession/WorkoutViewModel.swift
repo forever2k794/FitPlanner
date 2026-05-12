@@ -1,6 +1,12 @@
 import Combine
 import Foundation
 
+enum WorkoutFeedbackStyle {
+    case success
+    case warning
+    case info
+}
+
 @MainActor
 final class WorkoutViewModel: ObservableObject {
     @Published private(set) var plannedWorkoutDay: PlannedWorkoutDay?
@@ -8,6 +14,7 @@ final class WorkoutViewModel: ObservableObject {
     @Published private(set) var exerciseLogDrafts: [ExerciseLog]
     @Published private(set) var hasCompletedToday: Bool
     @Published var completionMessage: String?
+    @Published private(set) var completionMessageStyle: WorkoutFeedbackStyle
 
     private let fitnessService: FitnessService
     private let planGenerationService: PlanGenerationService
@@ -22,6 +29,7 @@ final class WorkoutViewModel: ObservableObject {
         self.planGenerationExplanation = nil
         self.exerciseLogDrafts = []
         self.hasCompletedToday = false
+        self.completionMessageStyle = .info
         refresh(rebuildDraft: true)
     }
 
@@ -63,6 +71,7 @@ final class WorkoutViewModel: ObservableObject {
         exerciseLogDrafts[exerciseLogIndex].sets.append(nextSet)
         normalizeSetNumbers(for: exerciseLogIndex)
         completionMessage = nil
+        completionMessageStyle = .info
     }
 
     func deleteSet(_ setID: UUID, from exerciseLogID: UUID) {
@@ -73,6 +82,7 @@ final class WorkoutViewModel: ObservableObject {
         exerciseLogDrafts[exerciseLogIndex].sets.removeAll { $0.id == setID }
         normalizeSetNumbers(for: exerciseLogIndex)
         completionMessage = nil
+        completionMessageStyle = .info
     }
 
     func updateSet(_ updatedSet: SetLog, in exerciseLogID: UUID) {
@@ -85,37 +95,44 @@ final class WorkoutViewModel: ObservableObject {
 
         exerciseLogDrafts[exerciseLogIndex].sets[setIndex] = updatedSet
         completionMessage = nil
+        completionMessageStyle = .info
     }
 
     func completeTodayWorkout() {
         guard let plannedWorkoutDay, !plannedWorkoutDay.isRestDay else {
             completionMessage = "今天沒有可完成的訓練課表。"
+            completionMessageStyle = .warning
             return
         }
 
         guard !hasCompletedToday else {
-            completionMessage = "今日訓練已完成。"
+            completionMessage = "本次訓練已完成。"
+            completionMessageStyle = .info
             return
         }
 
         let record = fitnessService.completeWorkout(for: plannedWorkoutDay)
         hasCompletedToday = true
         completionMessage = "已新增「\(record.title)」訓練紀錄。"
+        completionMessageStyle = .success
     }
 
     func saveWorkoutSession() {
         guard let plannedWorkoutDay, !plannedWorkoutDay.isRestDay else {
             completionMessage = "今天沒有可儲存的訓練課表。"
+            completionMessageStyle = .warning
             return
         }
 
         guard !hasCompletedToday else {
-            completionMessage = "今日訓練已經儲存。"
+            completionMessage = "本次訓練已經儲存。"
+            completionMessageStyle = .info
             return
         }
 
         guard !exerciseLogDrafts.isEmpty else {
             completionMessage = "請先建立至少一個動作紀錄。"
+            completionMessageStyle = .warning
             return
         }
 
@@ -125,6 +142,7 @@ final class WorkoutViewModel: ObservableObject {
         )
         refresh(rebuildDraft: true)
         completionMessage = "已儲存「\(record.title)」訓練紀錄。"
+        completionMessageStyle = .success
     }
 
     private func makeExerciseLogDrafts(from plannedWorkoutDay: PlannedWorkoutDay?) -> [ExerciseLog] {

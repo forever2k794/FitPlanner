@@ -19,6 +19,10 @@ struct SettingsView: View {
                     settingsRow(title: "目標", value: viewModel.userProfile.goal)
                     settingsRow(title: "經驗程度", value: viewModel.userProfile.experienceLevel)
                     settingsRow(title: "每週目標訓練天數", value: "\(viewModel.userProfile.weeklyTargetTrainingDays) 天")
+
+                    if let profileStatusMessage = viewModel.profileStatusMessage {
+                        statusText(profileStatusMessage, color: .green)
+                    }
                 }
 
                 Section("資料管理") {
@@ -36,37 +40,39 @@ struct SettingsView: View {
                     Button {
                         viewModel.prepareBackupExport()
                     } label: {
-                        Label("準備匯出備份", systemImage: "doc.badge.gearshape")
+                        Label("準備匯出 JSON 備份", systemImage: "doc.badge.gearshape")
                     }
 
                     if let backupFileURL = viewModel.backupFileURL {
                         ShareLink(item: backupFileURL) {
                             Label("分享備份檔", systemImage: "square.and.arrow.up")
                         }
+                    } else {
+                        Text("尚未產生可分享的備份檔。")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
 
                     Button {
                         isShowingBackupImporter = true
                     } label: {
-                        Label("匯入備份", systemImage: "tray.and.arrow.down")
+                        Label("匯入 JSON 備份", systemImage: "tray.and.arrow.down")
+                    }
+
+                    if let exportSuccessMessage = viewModel.exportSuccessMessage {
+                        statusText(exportSuccessMessage, color: .green)
                     }
 
                     if let exportErrorMessage = viewModel.exportErrorMessage {
-                        Text(exportErrorMessage)
-                            .font(.caption)
-                            .foregroundStyle(.red)
+                        statusText(exportErrorMessage, color: .red)
                     }
 
                     if let importSuccessMessage = viewModel.importSuccessMessage {
-                        Text(importSuccessMessage)
-                            .font(.caption)
-                            .foregroundStyle(.green)
+                        statusText(importSuccessMessage, color: .green)
                     }
 
                     if let importErrorMessage = viewModel.importErrorMessage {
-                        Text(importErrorMessage)
-                            .font(.caption)
-                            .foregroundStyle(.red)
+                        statusText(importErrorMessage, color: .red)
                     }
                 }
             }
@@ -102,6 +108,13 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.trailing)
         }
+    }
+
+    private func statusText(_ text: String, color: Color) -> some View {
+        Text(text)
+            .font(.caption)
+            .foregroundStyle(color)
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 

@@ -5,6 +5,8 @@ import Foundation
 final class SettingsViewModel: ObservableObject {
     @Published private(set) var userProfile: UserProfile
     @Published private(set) var backupFileURL: URL?
+    @Published private(set) var profileStatusMessage: String?
+    @Published private(set) var exportSuccessMessage: String?
     @Published private(set) var exportErrorMessage: String?
     @Published private(set) var importSuccessMessage: String?
     @Published private(set) var importErrorMessage: String?
@@ -30,15 +32,18 @@ final class SettingsViewModel: ObservableObject {
 
     func saveUserProfile(_ profile: UserProfile) {
         fitnessService.saveUserProfile(profile)
+        profileStatusMessage = "個人資料已儲存。"
         refresh()
     }
 
     func prepareBackupExport() {
         do {
             backupFileURL = try backupExportService.exportBackup()
+            exportSuccessMessage = "備份檔已準備好，可以分享或儲存。"
             exportErrorMessage = nil
         } catch {
             backupFileURL = nil
+            exportSuccessMessage = nil
             exportErrorMessage = "備份檔產生失敗，請稍後再試。"
         }
     }
@@ -48,6 +53,7 @@ final class SettingsViewModel: ObservableObject {
             try backupImportService.importBackup(from: url)
             importSuccessMessage = "備份匯入成功，資料已更新。"
             importErrorMessage = nil
+            profileStatusMessage = nil
             refresh()
         } catch {
             importSuccessMessage = nil

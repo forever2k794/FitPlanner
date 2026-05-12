@@ -13,7 +13,7 @@ struct WorkoutHistoryView: View {
                 if viewModel.records.isEmpty {
                     EmptyStateView(
                         title: "尚無訓練紀錄",
-                        message: "完成並儲存今日訓練後，這裡會顯示歷史紀錄。",
+                        message: "完成並儲存訓練後，這裡會顯示歷史紀錄。",
                         systemImage: "clock.badge.questionmark"
                     )
                 } else {
