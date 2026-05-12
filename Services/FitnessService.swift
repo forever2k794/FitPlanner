@@ -19,6 +19,10 @@ final class FitnessService {
         repository.fetchWorkoutRecords()
     }
 
+    func upsertWorkoutRecords(_ records: [WorkoutSessionRecord]) {
+        repository.upsertWorkoutRecords(records)
+    }
+
     func deleteWorkoutRecord(id: UUID) {
         repository.deleteWorkoutRecord(id: id)
     }

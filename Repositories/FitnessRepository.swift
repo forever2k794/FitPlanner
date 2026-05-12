@@ -7,6 +7,7 @@ protocol FitnessRepository: AnyObject {
     func fetchGeneratedPlan() -> GeneratedPlan
     func saveUserProfile(_ profile: UserProfile)
     func saveWorkoutRecord(_ record: WorkoutSessionRecord)
+    func upsertWorkoutRecords(_ records: [WorkoutSessionRecord])
     func updateWorkoutRecord(_ record: WorkoutSessionRecord)
     func deleteWorkoutRecord(id: UUID)
     func canDeleteWorkoutRecord(id: UUID) -> Bool

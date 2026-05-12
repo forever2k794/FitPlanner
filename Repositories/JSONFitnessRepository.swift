@@ -30,8 +30,10 @@ final class JSONFitnessRepository: FitnessRepository {
     }
 
     func fetchWorkoutRecords() -> [WorkoutSessionRecord] {
-        (MockWorkoutRecords.history + workoutRecordStore.loadRecords())
-            .sorted { $0.date > $1.date }
+        mergedWorkoutRecords(
+            seedRecords: MockWorkoutRecords.history,
+            jsonRecords: workoutRecordStore.loadRecords()
+        )
     }
 
     func fetchGeneratedPlan() -> GeneratedPlan {
@@ -52,6 +54,20 @@ final class JSONFitnessRepository: FitnessRepository {
         }
 
         workoutRecordStore.saveRecords(jsonRecords.sorted { $0.date > $1.date })
+    }
+
+    func upsertWorkoutRecords(_ records: [WorkoutSessionRecord]) {
+        var jsonRecordsByID: [UUID: WorkoutSessionRecord] = [:]
+
+        for record in workoutRecordStore.loadRecords() {
+            jsonRecordsByID[record.id] = record
+        }
+
+        for record in records {
+            jsonRecordsByID[record.id] = record
+        }
+
+        workoutRecordStore.saveRecords(jsonRecordsByID.values.sorted { $0.date > $1.date })
     }
 
     func updateWorkoutRecord(_ record: WorkoutSessionRecord) {
@@ -87,5 +103,22 @@ final class JSONFitnessRepository: FitnessRepository {
             .filter { !$0.isRestDay }
             .sorted { $0.date < $1.date }
             .first { $0.date.fitPlannerStartOfDay >= date.fitPlannerStartOfDay }
+    }
+
+    private func mergedWorkoutRecords(
+        seedRecords: [WorkoutSessionRecord],
+        jsonRecords: [WorkoutSessionRecord]
+    ) -> [WorkoutSessionRecord] {
+        var recordsByID: [UUID: WorkoutSessionRecord] = [:]
+
+        for record in seedRecords {
+            recordsByID[record.id] = record
+        }
+
+        for record in jsonRecords {
+            recordsByID[record.id] = record
+        }
+
+        return recordsByID.values.sorted { $0.date > $1.date }
     }
 }

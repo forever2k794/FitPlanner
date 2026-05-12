@@ -1,7 +1,9 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @StateObject private var viewModel: SettingsViewModel
+    @State private var isShowingBackupImporter = false
 
     init(viewModel: SettingsViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -43,8 +45,26 @@ struct SettingsView: View {
                         }
                     }
 
+                    Button {
+                        isShowingBackupImporter = true
+                    } label: {
+                        Label("匯入備份", systemImage: "tray.and.arrow.down")
+                    }
+
                     if let exportErrorMessage = viewModel.exportErrorMessage {
                         Text(exportErrorMessage)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+
+                    if let importSuccessMessage = viewModel.importSuccessMessage {
+                        Text(importSuccessMessage)
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    }
+
+                    if let importErrorMessage = viewModel.importErrorMessage {
+                        Text(importErrorMessage)
                             .font(.caption)
                             .foregroundStyle(.red)
                     }
@@ -53,6 +73,23 @@ struct SettingsView: View {
             .navigationTitle("設定")
             .onAppear {
                 viewModel.refresh()
+            }
+            .fileImporter(
+                isPresented: $isShowingBackupImporter,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false
+            ) { result in
+                switch result {
+                case .success(let urls):
+                    guard let url = urls.first else {
+                        viewModel.markBackupImportFailed()
+                        return
+                    }
+
+                    viewModel.importBackup(from: url)
+                case .failure:
+                    viewModel.markBackupImportFailed()
+                }
             }
         }
     }
@@ -73,7 +110,8 @@ struct SettingsView: View {
     SettingsView(
         viewModel: SettingsViewModel(
             fitnessService: container.fitnessService,
-            backupExportService: container.backupExportService
+            backupExportService: container.backupExportService,
+            backupImportService: container.backupImportService
         )
     )
 }

@@ -8,6 +8,7 @@ final class AppContainer: ObservableObject {
     let planGenerationService: PlanGenerationService
     let progressSummaryService: ProgressSummaryService
     let backupExportService: BackupExportService
+    let backupImportService: BackupImportService
 
     init(repository: FitnessRepository = JSONFitnessRepository()) {
         self.repository = repository
@@ -16,6 +17,7 @@ final class AppContainer: ObservableObject {
         self.planGenerationService = PlanGenerationService(repository: repository)
         self.progressSummaryService = ProgressSummaryService(repository: repository)
         self.backupExportService = BackupExportService(fitnessService: fitnessService)
+        self.backupImportService = BackupImportService(fitnessService: fitnessService)
     }
 
     static func preview() -> AppContainer {

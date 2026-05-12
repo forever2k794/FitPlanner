@@ -48,7 +48,8 @@ struct RootTabView: View {
             SettingsView(
                 viewModel: SettingsViewModel(
                     fitnessService: container.fitnessService,
-                    backupExportService: container.backupExportService
+                    backupExportService: container.backupExportService,
+                    backupImportService: container.backupImportService
                 )
             )
             .tabItem {

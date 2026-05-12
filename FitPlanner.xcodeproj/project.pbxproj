@@ -63,6 +63,7 @@
 		A10000000000000000000036 /* CalendarDaySummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000036 /* CalendarDaySummary.swift */; };
 		A10000000000000000000037 /* CalendarDayCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000037 /* CalendarDayCellView.swift */; };
 		A10000000000000000000038 /* WorkoutDaySummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000038 /* WorkoutDaySummaryCardView.swift */; };
+		A10000000000000000000039 /* BackupImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000039 /* BackupImportService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -123,6 +124,7 @@
 		A20000000000000000000036 /* CalendarDaySummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDaySummary.swift; sourceTree = "<group>"; };
 		A20000000000000000000037 /* CalendarDayCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCellView.swift; sourceTree = "<group>"; };
 		A20000000000000000000038 /* WorkoutDaySummaryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDaySummaryCardView.swift; sourceTree = "<group>"; };
+		A20000000000000000000039 /* BackupImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,6 +203,7 @@
 				A20000000000000000000029 /* LocalJSONWorkoutRecordStore.swift */,
 				A2000000000000000000002B /* LocalJSONUserProfileStore.swift */,
 				A20000000000000000000032 /* BackupExportService.swift */,
+				A20000000000000000000039 /* BackupImportService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -423,6 +426,7 @@
 				A10000000000000000000029 /* LocalJSONWorkoutRecordStore.swift in Sources */,
 				A1000000000000000000002B /* LocalJSONUserProfileStore.swift in Sources */,
 				A10000000000000000000032 /* BackupExportService.swift in Sources */,
+				A10000000000000000000039 /* BackupImportService.swift in Sources */,
 				A10000000000000000000011 /* MockExercises.swift in Sources */,
 				A10000000000000000000012 /* MockUserProfile.swift in Sources */,
 				A10000000000000000000013 /* MockWorkoutRecords.swift in Sources */,

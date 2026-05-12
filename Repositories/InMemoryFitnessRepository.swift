@@ -42,6 +42,16 @@ final class InMemoryFitnessRepository: FitnessRepository {
         workoutRecords.append(record)
     }
 
+    func upsertWorkoutRecords(_ records: [WorkoutSessionRecord]) {
+        for record in records {
+            if let index = workoutRecords.firstIndex(where: { $0.id == record.id }) {
+                workoutRecords[index] = record
+            } else {
+                workoutRecords.append(record)
+            }
+        }
+    }
+
     func updateWorkoutRecord(_ record: WorkoutSessionRecord) {
         guard let index = workoutRecords.firstIndex(where: { $0.id == record.id }) else {
             return
