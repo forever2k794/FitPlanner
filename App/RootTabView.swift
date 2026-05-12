@@ -36,7 +36,8 @@ struct RootTabView: View {
 
             ProgressView(
                 viewModel: ProgressViewModel(
-                    progressSummaryService: container.progressSummaryService
+                    progressSummaryService: container.progressSummaryService,
+                    fitnessService: container.fitnessService
                 ),
                 fitnessService: container.fitnessService
             )
