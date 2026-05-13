@@ -24,9 +24,9 @@ enum ExerciseProgressionRule {
 
     static func category(for exerciseName: String) -> ExerciseProgressionCategory {
         switch exerciseName {
-        case "深蹲", "臥推", "硬舉", "肩推", "划船":
+        case "深蹲", "臥推", "槓鈴臥推", "啞鈴臥推", "上斜啞鈴臥推", "硬舉", "羅馬尼亞硬舉", "肩推", "划船", "槓鈴划船", "啞鈴划船", "引體向上", "腿推", "臀推":
             return .primary
-        case "腹部訓練":
+        case "腹部訓練", "平板支撐", "捲腹", "懸垂舉腿", "Cable Crunch":
             return .bodyweightCore
         default:
             return .accessory
@@ -37,24 +37,40 @@ enum ExerciseProgressionRule {
         switch exerciseName {
         case "深蹲":
             return 80
-        case "臥推":
+        case "臥推", "槓鈴臥推":
             return 60
-        case "硬舉":
+        case "啞鈴臥推", "上斜啞鈴臥推":
+            return 22
+        case "硬舉", "羅馬尼亞硬舉":
             return 100
         case "肩推":
             return 20
-        case "划船":
+        case "划船", "槓鈴划船":
             return 55
+        case "啞鈴划船":
+            return 24
+        case "機械胸推":
+            return 45
+        case "引體向上", "平板支撐", "捲腹", "懸垂舉腿", "腹部訓練":
+            return 0
         case "滑輪下拉":
             return 50
+        case "坐姿划船":
+            return 45
+        case "繩索下壓", "二頭彎舉", "面拉", "Cable Crunch":
+            return 15
         case "腿推":
             return 140
+        case "腿伸展":
+            return 45
         case "腿彎舉":
             return 40
+        case "臀推":
+            return 80
+        case "小腿提踵":
+            return 50
         case "側平舉":
             return 8
-        case "腹部訓練":
-            return 0
         default:
             return 20
         }

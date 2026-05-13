@@ -52,6 +52,66 @@ final class RuleBasedPlanGenerationService {
         return (plannedWorkoutDay, explanation)
     }
 
+    func generateNextWorkout(
+        profile: UserProfile,
+        workoutRecords: [WorkoutSessionRecord],
+        exercises: [Exercise],
+        preference: WorkoutGenerationPreference
+    ) -> PlannedWorkoutDay {
+        generateNextWorkoutWithExplanation(
+            profile: profile,
+            workoutRecords: workoutRecords,
+            exercises: exercises,
+            preference: preference
+        ).plannedWorkoutDay
+    }
+
+    func generateNextWorkoutWithExplanation(
+        profile: UserProfile,
+        workoutRecords: [WorkoutSessionRecord],
+        exercises: [Exercise],
+        preference: WorkoutGenerationPreference
+    ) -> (plannedWorkoutDay: PlannedWorkoutDay, explanation: PlanGenerationExplanation) {
+        if preference.focusType == .recommended {
+            return generateRecommendedWorkoutWithPreference(
+                profile: profile,
+                workoutRecords: workoutRecords,
+                exercises: exercises,
+                preference: preference
+            )
+        }
+
+        let sortedRecords = workoutRecords.sorted { $0.date > $1.date }
+        let selectedExercises = selectExercises(
+            from: exercises,
+            focusType: preference.focusType,
+            availableEquipment: preference.availableEquipment,
+            trainingStyle: preference.trainingStyle
+        )
+        let exerciseResults = selectedExercises.map { exercise in
+            plannedExerciseWithExplanation(
+                for: exercise,
+                previousLog: latestExerciseLog(for: exercise, in: sortedRecords),
+                trainingStyle: preference.trainingStyle
+            )
+        }
+        let title = "\(preference.focusType.displayName)・\(preference.trainingStyle.displayName)"
+        let plannedWorkoutDay = PlannedWorkoutDay(
+            date: Date(),
+            title: title,
+            focus: preference.focusType.displayName,
+            plannedExercises: exerciseResults.map { $0.plannedExercise }
+        )
+        let explanation = PlanGenerationExplanation(
+            summary: "依照今天選擇的「\(preference.focusType.displayName)」與「\(preference.trainingStyle.displayName)」產生課表。",
+            splitReason: "可用器材：\(equipmentSummary(preference.availableEquipment))。系統優先挑選符合目標肌群、器材與訓練方式的動作。",
+            historyReference: historyReferenceText(from: sortedRecords),
+            exerciseReasons: exerciseResults.map { $0.explanation }
+        )
+
+        return (plannedWorkoutDay, explanation)
+    }
+
     private func nextSplitType(
         weeklyTargetTrainingDays: Int,
         latestRecord: WorkoutSessionRecord?
@@ -99,6 +159,152 @@ final class RuleBasedPlanGenerationService {
                 return .push
             }
         }
+    }
+
+    private func generateRecommendedWorkoutWithPreference(
+        profile: UserProfile,
+        workoutRecords: [WorkoutSessionRecord],
+        exercises: [Exercise],
+        preference: WorkoutGenerationPreference
+    ) -> (plannedWorkoutDay: PlannedWorkoutDay, explanation: PlanGenerationExplanation) {
+        let sortedRecords = workoutRecords.sorted { $0.date > $1.date }
+        let splitType = nextSplitType(
+            weeklyTargetTrainingDays: profile.weeklyTargetTrainingDays,
+            latestRecord: sortedRecords.first
+        )
+        let focusType = workoutFocusType(for: splitType)
+        let selectedExercises = selectExercises(
+            from: exercises,
+            focusType: focusType,
+            availableEquipment: preference.availableEquipment,
+            trainingStyle: preference.trainingStyle,
+            fallbackNames: exerciseNames(for: splitType)
+        )
+        let exerciseResults = selectedExercises.map { exercise in
+            plannedExerciseWithExplanation(
+                for: exercise,
+                previousLog: latestExerciseLog(for: exercise, in: sortedRecords),
+                trainingStyle: preference.trainingStyle
+            )
+        }
+
+        let plannedWorkoutDay = PlannedWorkoutDay(
+            date: Date(),
+            title: splitType.displayName,
+            focus: focusName(for: splitType),
+            plannedExercises: exerciseResults.map { $0.plannedExercise }
+        )
+        let explanation = PlanGenerationExplanation(
+            summary: summaryText(for: splitType, profile: profile, latestRecord: sortedRecords.first),
+            splitReason: splitReasonText(
+                for: splitType,
+                weeklyTargetTrainingDays: profile.weeklyTargetTrainingDays,
+                latestRecord: sortedRecords.first
+            ) + " 可用器材：\(equipmentSummary(preference.availableEquipment))；訓練方式：\(preference.trainingStyle.displayName)。",
+            historyReference: historyReferenceText(from: sortedRecords),
+            exerciseReasons: exerciseResults.map { $0.explanation }
+        )
+
+        return (plannedWorkoutDay, explanation)
+    }
+
+    private func selectExercises(
+        from exercises: [Exercise],
+        focusType: WorkoutFocusType,
+        availableEquipment: [EquipmentType],
+        trainingStyle: TrainingStyle,
+        fallbackNames: [String] = []
+    ) -> [Exercise] {
+        let equipmentFiltered = exercises.filter { exercise in
+            matchesEquipment(exercise, availableEquipment: availableEquipment)
+        }
+        let focusFiltered = equipmentFiltered.filter { exercise in
+            matchesFocus(exercise, focusType: focusType)
+        }
+        let strictMatches = focusFiltered.filter { exercise in
+            matchesTrainingStyle(exercise, trainingStyle: trainingStyle)
+        }
+
+        let fallbackByName = fallbackNames
+            .compactMap { exercise(named: $0, in: equipmentFiltered) }
+            .filter { matchesTrainingStyle($0, trainingStyle: trainingStyle) || strictMatches.isEmpty }
+
+        return uniqueExercises(strictMatches + fallbackByName + focusFiltered)
+            .sorted { lhs, rhs in
+                if lhs.isCompound != rhs.isCompound {
+                    return lhs.isCompound && trainingStyle != .recovery
+                }
+
+                return lhs.name < rhs.name
+            }
+            .prefix(4)
+            .map { $0 }
+    }
+
+    private func matchesEquipment(
+        _ exercise: Exercise,
+        availableEquipment: [EquipmentType]
+    ) -> Bool {
+        guard !availableEquipment.isEmpty else {
+            return true
+        }
+
+        return !Set(exercise.equipmentTypes).isDisjoint(with: Set(availableEquipment))
+    }
+
+    private func matchesFocus(
+        _ exercise: Exercise,
+        focusType: WorkoutFocusType
+    ) -> Bool {
+        if focusType == .custom {
+            return true
+        }
+
+        if exercise.supportedFocusTypes.contains(focusType) {
+            return true
+        }
+
+        switch focusType {
+        case .push:
+            return exercise.primaryMuscleGroups.contains(.chest) || exercise.primaryMuscleGroups.contains(.shoulders) || exercise.primaryMuscleGroups.contains(.triceps)
+        case .pull:
+            return exercise.primaryMuscleGroups.contains(.back) || exercise.primaryMuscleGroups.contains(.biceps)
+        case .legs:
+            return exercise.primaryMuscleGroups.contains(.quads) || exercise.primaryMuscleGroups.contains(.hamstrings) || exercise.primaryMuscleGroups.contains(.glutes) || exercise.primaryMuscleGroups.contains(.calves)
+        case .fullBody, .recommended:
+            return exercise.isCompound || exercise.primaryMuscleGroups.contains(.core)
+        case .chest:
+            return exercise.primaryMuscleGroups.contains(.chest)
+        case .back:
+            return exercise.primaryMuscleGroups.contains(.back)
+        case .shoulders:
+            return exercise.primaryMuscleGroups.contains(.shoulders)
+        case .arms:
+            return exercise.primaryMuscleGroups.contains(.biceps) || exercise.primaryMuscleGroups.contains(.triceps)
+        case .core:
+            return exercise.primaryMuscleGroups.contains(.core)
+        case .custom:
+            return true
+        }
+    }
+
+    private func matchesTrainingStyle(
+        _ exercise: Exercise,
+        trainingStyle: TrainingStyle
+    ) -> Bool {
+        trainingStyle == .custom || exercise.supportedTrainingStyles.contains(trainingStyle)
+    }
+
+    private func uniqueExercises(_ exercises: [Exercise]) -> [Exercise] {
+        var seenIDs: Set<UUID> = []
+        var result: [Exercise] = []
+
+        for exercise in exercises where !seenIDs.contains(exercise.id) {
+            seenIDs.insert(exercise.id)
+            result.append(exercise)
+        }
+
+        return result
     }
 
     private func splitType(from record: WorkoutSessionRecord) -> TrainingSplitType {
@@ -164,21 +370,21 @@ final class RuleBasedPlanGenerationService {
     private func exerciseNames(for splitType: TrainingSplitType) -> [String] {
         switch splitType {
         case .fullBody, .fullBodyA:
-            return ["深蹲", "臥推", "划船", "腹部訓練"]
+            return ["深蹲", "槓鈴臥推", "槓鈴划船", "捲腹"]
         case .fullBodyB:
-            return ["硬舉", "肩推", "滑輪下拉", "腿彎舉"]
+            return ["羅馬尼亞硬舉", "肩推", "滑輪下拉", "腿彎舉"]
         case .fullBodyC:
-            return ["腿推", "臥推", "划船", "側平舉"]
+            return ["腿推", "啞鈴臥推", "坐姿划船", "側平舉"]
         case .upperPush, .push:
-            return ["臥推", "肩推", "側平舉", "腹部訓練"]
+            return ["槓鈴臥推", "肩推", "側平舉", "繩索下壓"]
         case .upperPull, .pull:
-            return ["硬舉", "划船", "滑輪下拉", "腹部訓練"]
+            return ["引體向上", "槓鈴划船", "滑輪下拉", "二頭彎舉"]
         case .lowerBody, .legs:
-            return ["深蹲", "腿推", "腿彎舉", "腹部訓練"]
+            return ["深蹲", "腿推", "腿彎舉", "小腿提踵"]
         case .fullBodyVolume:
-            return ["深蹲", "臥推", "划船", "腹部訓練"]
+            return ["深蹲", "機械胸推", "坐姿划船", "平板支撐"]
         case .recovery:
-            return ["滑輪下拉", "腿彎舉", "側平舉", "腹部訓練"]
+            return ["滑輪下拉", "腿彎舉", "側平舉", "平板支撐"]
         }
     }
 
@@ -195,6 +401,29 @@ final class RuleBasedPlanGenerationService {
         case .recovery:
             return "恢復"
         }
+    }
+
+    private func workoutFocusType(for splitType: TrainingSplitType) -> WorkoutFocusType {
+        switch splitType {
+        case .fullBody, .fullBodyA, .fullBodyB, .fullBodyC, .fullBodyVolume:
+            return .fullBody
+        case .upperPush, .push:
+            return .push
+        case .upperPull, .pull:
+            return .pull
+        case .lowerBody, .legs:
+            return .legs
+        case .recovery:
+            return .fullBody
+        }
+    }
+
+    private func equipmentSummary(_ equipmentTypes: [EquipmentType]) -> String {
+        if equipmentTypes.isEmpty || equipmentTypes.count == EquipmentType.allCases.count {
+            return "全部器材"
+        }
+
+        return equipmentTypes.map(\.displayName).joined(separator: "、")
     }
 
     private func exercise(named name: String, in exercises: [Exercise]) -> Exercise? {
@@ -222,10 +451,11 @@ final class RuleBasedPlanGenerationService {
 
     private func plannedExerciseWithExplanation(
         for exercise: Exercise,
-        previousLog: ExerciseLog?
+        previousLog: ExerciseLog?,
+        trainingStyle: TrainingStyle = .hypertrophy
     ) -> (plannedExercise: PlannedExercise, explanation: ExercisePlanExplanation) {
         let category = ExerciseProgressionRule.category(for: exercise.name)
-        let defaults = defaultPrescription(for: exercise, category: category)
+        let defaults = defaultPrescription(for: exercise, category: category, trainingStyle: trainingStyle)
 
         guard let previousLog, !previousLog.sets.isEmpty else {
             let plannedExercise = PlannedExercise(
@@ -233,8 +463,8 @@ final class RuleBasedPlanGenerationService {
                 targetSets: defaults.sets,
                 targetReps: defaults.reps,
                 suggestedWeightInKilograms: defaults.weight,
-                targetRPE: ExerciseProgressionRule.defaultTargetRPE,
-                targetRIR: ExerciseProgressionRule.defaultTargetRIR
+                targetRPE: defaults.rpe,
+                targetRIR: defaults.rir
             )
             let explanation = ExercisePlanExplanation(
                 exerciseName: exercise.name,
@@ -257,15 +487,15 @@ final class RuleBasedPlanGenerationService {
         let canProgress = completedAllSets && ((averageRPE ?? 10) <= 8 || (averageRIR ?? 0) >= 2)
 
         if isFatigued {
-            let targetSets = max(previousLog.sets.count - 1, ExerciseProgressionRule.minimumTargetSets)
-            let suggestedWeight = roundedWeight(averageWeight * ExerciseProgressionRule.fatigueLoadMultiplier)
+            let targetSets = max(min(defaults.sets, previousLog.sets.count) - 1, ExerciseProgressionRule.minimumTargetSets)
+            let suggestedWeight = roundedWeight(averageWeight * fatigueMultiplier(for: trainingStyle))
             let plannedExercise = PlannedExercise(
                 exercise: exercise,
                 targetSets: targetSets,
-                targetReps: max(Int(averageReps.rounded()), 1),
+                targetReps: defaults.reps,
                 suggestedWeightInKilograms: suggestedWeight,
-                targetRPE: ExerciseProgressionRule.fatigueTargetRPE,
-                targetRIR: ExerciseProgressionRule.fatigueTargetRIR
+                targetRPE: fatigueTargetRPE(for: trainingStyle),
+                targetRIR: fatigueTargetRIR(for: trainingStyle)
             )
             let fatigueText = fatigueReason(
                 completedAllSets: completedAllSets,
@@ -285,11 +515,11 @@ final class RuleBasedPlanGenerationService {
             let suggestedWeight = roundedWeight(averageWeight)
             let plannedExercise = PlannedExercise(
                 exercise: exercise,
-                targetSets: previousLog.sets.count,
-                targetReps: max(Int(averageReps.rounded()), 1),
+                targetSets: defaults.sets,
+                targetReps: defaults.reps,
                 suggestedWeightInKilograms: suggestedWeight,
-                targetRPE: ExerciseProgressionRule.defaultTargetRPE,
-                targetRIR: ExerciseProgressionRule.defaultTargetRIR
+                targetRPE: defaults.rpe,
+                targetRIR: defaults.rir
             )
             let explanation = ExercisePlanExplanation(
                 exerciseName: exercise.name,
@@ -304,11 +534,11 @@ final class RuleBasedPlanGenerationService {
         let suggestedWeight = roundedWeight(progressedWeight)
         let plannedExercise = PlannedExercise(
             exercise: exercise,
-            targetSets: previousLog.sets.count,
-            targetReps: max(Int(averageReps.rounded()), 1),
+            targetSets: defaults.sets,
+            targetReps: defaults.reps,
             suggestedWeightInKilograms: suggestedWeight,
-            targetRPE: ExerciseProgressionRule.defaultTargetRPE,
-            targetRIR: ExerciseProgressionRule.defaultTargetRIR
+            targetRPE: defaults.rpe,
+            targetRIR: defaults.rir
         )
 
         if canProgress {
@@ -332,13 +562,66 @@ final class RuleBasedPlanGenerationService {
 
     private func defaultPrescription(
         for exercise: Exercise,
-        category: ExerciseProgressionCategory
-    ) -> (sets: Int, reps: Int, weight: Double) {
-        (
-            sets: ExerciseProgressionRule.defaultSets(for: category),
-            reps: ExerciseProgressionRule.defaultReps(for: category),
-            weight: ExerciseProgressionRule.defaultWeight(for: exercise.name)
-        )
+        category: ExerciseProgressionCategory,
+        trainingStyle: TrainingStyle
+    ) -> (sets: Int, reps: Int, weight: Double, rpe: Double, rir: Int) {
+        let baseSets = max(exercise.defaultSets, ExerciseProgressionRule.defaultSets(for: category))
+        let baseReps = max(exercise.defaultReps, 1)
+        let baseWeight = ExerciseProgressionRule.defaultWeight(for: exercise.name)
+
+        switch trainingStyle {
+        case .strength:
+            return (
+                sets: min(max(baseSets, 3), 5),
+                reps: min(max(baseReps, 3), 6),
+                weight: baseWeight,
+                rpe: 8,
+                rir: 2
+            )
+        case .hypertrophy, .custom:
+            return (
+                sets: min(max(baseSets, 3), 4),
+                reps: min(max(baseReps, 8), 12),
+                weight: baseWeight,
+                rpe: 8,
+                rir: 2
+            )
+        case .endurance:
+            return (
+                sets: min(max(baseSets, 2), 4),
+                reps: min(max(baseReps, 12), 20),
+                weight: roundedWeight(baseWeight * 0.8),
+                rpe: 7.5,
+                rir: 3
+            )
+        case .recovery:
+            return (
+                sets: 2,
+                reps: min(max(baseReps, 10), 15),
+                weight: roundedWeight(baseWeight * 0.6),
+                rpe: 6.5,
+                rir: 4
+            )
+        }
+    }
+
+    private func fatigueMultiplier(for trainingStyle: TrainingStyle) -> Double {
+        switch trainingStyle {
+        case .recovery:
+            return 0.7
+        case .endurance:
+            return 0.85
+        default:
+            return ExerciseProgressionRule.fatigueLoadMultiplier
+        }
+    }
+
+    private func fatigueTargetRPE(for trainingStyle: TrainingStyle) -> Double {
+        trainingStyle == .recovery ? 6.5 : ExerciseProgressionRule.fatigueTargetRPE
+    }
+
+    private func fatigueTargetRIR(for trainingStyle: TrainingStyle) -> Int {
+        trainingStyle == .recovery ? 4 : ExerciseProgressionRule.fatigueTargetRIR
     }
 
     private func weightIncrease(for category: ExerciseProgressionCategory) -> Double {

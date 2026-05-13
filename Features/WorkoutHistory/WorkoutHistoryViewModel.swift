@@ -33,7 +33,10 @@ final class WorkoutHistoryViewModel: ObservableObject {
     func detailViewModel(for record: WorkoutSessionRecord) -> WorkoutHistoryDetailViewModel {
         WorkoutHistoryDetailViewModel(
             session: record,
-            fitnessService: fitnessService
+            fitnessService: fitnessService,
+            onSave: { [weak self] in
+                self?.refresh()
+            }
         )
     }
 

@@ -4,6 +4,7 @@ import SwiftUI
 struct WorkoutView: View {
     @StateObject private var viewModel: WorkoutViewModel
     @State private var expandedExerciseLogIDs: Set<UUID> = []
+    @State private var isShowingAddExercise = false
 
     init(viewModel: WorkoutViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -14,6 +15,7 @@ struct WorkoutView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     headerSection
+                    workoutPreferenceSection
                     explanationSection
                     plannedExercisesSection
                     completionSection
@@ -25,7 +27,86 @@ struct WorkoutView: View {
                 viewModel.refresh()
                 expandFirstDraftIfNeeded()
             }
+            .sheet(isPresented: $isShowingAddExercise) {
+                AddExerciseToWorkoutView(
+                    exercises: viewModel.availableExercises,
+                    onSelect: { exercise in
+                        viewModel.addExercise(exercise)
+                        if let lastExerciseLogID = viewModel.exerciseLogDrafts.last?.id {
+                            expandedExerciseLogIDs.insert(lastExerciseLogID)
+                        }
+                    }
+                )
+            }
         }
+    }
+
+    private var workoutPreferenceSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            SectionHeaderView(
+                title: "今天想練什麼？",
+                subtitle: "先選目標、器材與訓練方式，再重新產生課表"
+            )
+
+            HStack(spacing: 10) {
+                preferenceMenu(
+                    title: "訓練類型",
+                    value: viewModel.selectedFocusType.displayName
+                ) {
+                    ForEach(viewModel.availableFocusTypes) { focusType in
+                        Button(focusType.displayName) {
+                            viewModel.selectFocusType(focusType)
+                        }
+                    }
+                }
+
+                preferenceMenu(
+                    title: "訓練方式",
+                    value: viewModel.selectedTrainingStyle.displayName
+                ) {
+                    ForEach(viewModel.availableTrainingStyles) { trainingStyle in
+                        Button(trainingStyle.displayName) {
+                            viewModel.selectTrainingStyle(trainingStyle)
+                        }
+                    }
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("可用器材")
+                    .font(.subheadline.weight(.semibold))
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                    ForEach(viewModel.availableEquipmentTypes) { equipmentType in
+                        Button {
+                            viewModel.toggleEquipmentType(equipmentType)
+                        } label: {
+                            Label(
+                                equipmentType.displayName,
+                                systemImage: viewModel.isEquipmentSelected(equipmentType) ? "checkmark.circle.fill" : "circle"
+                            )
+                            .font(.caption.weight(.medium))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(viewModel.isEquipmentSelected(equipmentType) ? .blue : .secondary)
+                    }
+                }
+            }
+
+            Button {
+                viewModel.regenerateWorkout()
+                expandedExerciseLogIDs = Set(viewModel.exerciseLogDrafts.prefix(1).map(\.id))
+            } label: {
+                Label("重新產生課表", systemImage: "arrow.clockwise")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding(16)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
     @ViewBuilder
@@ -107,6 +188,39 @@ struct WorkoutView: View {
             .fixedSize(horizontal: false, vertical: true)
     }
 
+    private func preferenceMenu<Content: View>(
+        title: String,
+        value: String,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        Menu {
+            content()
+        } label: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                HStack {
+                    Text(value)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.background.opacity(0.65), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+    }
+
     private func adjustmentColor(for adjustment: PlanAdjustmentType) -> Color {
         switch adjustment {
         case .progressed:
@@ -123,21 +237,34 @@ struct WorkoutView: View {
     @ViewBuilder
     private var plannedExercisesSection: some View {
         if !viewModel.exerciseLogDrafts.isEmpty {
-            SectionHeaderView(title: "動作紀錄", subtitle: "展開動作後編輯每一組資料")
+            HStack(alignment: .top, spacing: 12) {
+                SectionHeaderView(title: "動作紀錄", subtitle: "展開動作後編輯每一組資料")
+
+                Button {
+                    isShowingAddExercise = true
+                } label: {
+                    Label("新增動作", systemImage: "plus.circle.fill")
+                        .labelStyle(.iconOnly)
+                        .font(.title3)
+                }
+                .accessibilityLabel("新增動作")
+            }
 
             VStack(spacing: 14) {
                 ForEach(viewModel.exerciseLogDrafts) { exerciseLog in
                     VStack(spacing: 10) {
-                        Button {
-                            toggleExerciseLog(exerciseLog.id)
-                        } label: {
-                            WorkoutExerciseSummaryRow(
-                                exerciseLog: exerciseLog,
-                                plannedExercise: viewModel.plannedExercise(for: exerciseLog.exercise.id),
-                                isExpanded: expandedExerciseLogIDs.contains(exerciseLog.id)
-                            )
-                        }
-                        .buttonStyle(.plain)
+                        WorkoutExerciseSummaryRow(
+                            exerciseLog: exerciseLog,
+                            plannedExercise: viewModel.plannedExercise(for: exerciseLog.exercise.id),
+                            isExpanded: expandedExerciseLogIDs.contains(exerciseLog.id),
+                            onToggle: {
+                                toggleExerciseLog(exerciseLog.id)
+                            },
+                            onRemove: {
+                                viewModel.removeExerciseLog(exerciseLog.id)
+                                expandedExerciseLogIDs.remove(exerciseLog.id)
+                            }
+                        )
 
                         if expandedExerciseLogIDs.contains(exerciseLog.id) {
                             ExerciseLogEditorView(
@@ -158,11 +285,21 @@ struct WorkoutView: View {
                 }
             }
         } else {
-            EmptyStateView(
-                title: "今天是休息日",
-                message: "目前沒有安排訓練，建議保留恢復、伸展或輕度活動。",
-                systemImage: "moon.zzz.fill"
-            )
+            VStack(spacing: 12) {
+                EmptyStateView(
+                    title: "目前沒有動作",
+                    message: "可以重新產生課表，或手動新增今天想練的動作。",
+                    systemImage: "plus.circle"
+                )
+
+                Button {
+                    isShowingAddExercise = true
+                } label: {
+                    Label("新增動作", systemImage: "plus.circle.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
         }
     }
 
@@ -220,6 +357,8 @@ private struct WorkoutExerciseSummaryRow: View {
     let exerciseLog: ExerciseLog
     let plannedExercise: PlannedExercise?
     let isExpanded: Bool
+    let onToggle: () -> Void
+    let onRemove: () -> Void
 
     private var completedSetCount: Int {
         exerciseLog.sets.filter(\.isCompleted).count
@@ -239,9 +378,22 @@ private struct WorkoutExerciseSummaryRow: View {
 
                 Spacer()
 
-                Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
-                    .foregroundStyle(.blue)
-                    .font(.title3)
+                Button(role: .destructive) {
+                    onRemove()
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.headline)
+                }
+                .accessibilityLabel("移除此動作")
+
+                Button {
+                    onToggle()
+                } label: {
+                    Image(systemName: isExpanded ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                        .foregroundStyle(.blue)
+                        .font(.title3)
+                }
+                .accessibilityLabel(isExpanded ? "收合動作" : "展開動作")
             }
 
             HStack(spacing: 8) {
@@ -258,6 +410,10 @@ private struct WorkoutExerciseSummaryRow: View {
         }
         .padding(16)
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onToggle()
+        }
     }
 
     private func metricPill(title: String, value: String) -> some View {

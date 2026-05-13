@@ -64,6 +64,12 @@
 		A10000000000000000000037 /* CalendarDayCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000037 /* CalendarDayCellView.swift */; };
 		A10000000000000000000038 /* WorkoutDaySummaryCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000038 /* WorkoutDaySummaryCardView.swift */; };
 		A10000000000000000000039 /* BackupImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000039 /* BackupImportService.swift */; };
+		A1000000000000000000003A /* WorkoutFocusType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003A /* WorkoutFocusType.swift */; };
+		A1000000000000000000003B /* MuscleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003B /* MuscleGroup.swift */; };
+		A1000000000000000000003C /* EquipmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003C /* EquipmentType.swift */; };
+		A1000000000000000000003D /* TrainingStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003D /* TrainingStyle.swift */; };
+		A1000000000000000000003E /* WorkoutGenerationPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003E /* WorkoutGenerationPreference.swift */; };
+		A1000000000000000000003F /* AddExerciseToWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003F /* AddExerciseToWorkoutView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -125,6 +131,12 @@
 		A20000000000000000000037 /* CalendarDayCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCellView.swift; sourceTree = "<group>"; };
 		A20000000000000000000038 /* WorkoutDaySummaryCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutDaySummaryCardView.swift; sourceTree = "<group>"; };
 		A20000000000000000000039 /* BackupImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportService.swift; sourceTree = "<group>"; };
+		A2000000000000000000003A /* WorkoutFocusType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutFocusType.swift; sourceTree = "<group>"; };
+		A2000000000000000000003B /* MuscleGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuscleGroup.swift; sourceTree = "<group>"; };
+		A2000000000000000000003C /* EquipmentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquipmentType.swift; sourceTree = "<group>"; };
+		A2000000000000000000003D /* TrainingStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingStyle.swift; sourceTree = "<group>"; };
+		A2000000000000000000003E /* WorkoutGenerationPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutGenerationPreference.swift; sourceTree = "<group>"; };
+		A2000000000000000000003F /* AddExerciseToWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExerciseToWorkoutView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +191,11 @@
 				A20000000000000000000031 /* FitPlannerBackup.swift */,
 				A20000000000000000000035 /* ProgressMetric.swift */,
 				A20000000000000000000036 /* CalendarDaySummary.swift */,
+				A2000000000000000000003A /* WorkoutFocusType.swift */,
+				A2000000000000000000003B /* MuscleGroup.swift */,
+				A2000000000000000000003C /* EquipmentType.swift */,
+				A2000000000000000000003D /* TrainingStyle.swift */,
+				A2000000000000000000003E /* WorkoutGenerationPreference.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -248,6 +265,7 @@
 				A20000000000000000000018 /* WorkoutViewModel.swift */,
 				A20000000000000000000024 /* ExerciseLogEditorView.swift */,
 				A20000000000000000000025 /* SetLogRowView.swift */,
+				A2000000000000000000003F /* AddExerciseToWorkoutView.swift */,
 			);
 			path = WorkoutSession;
 			sourceTree = "<group>";
@@ -416,6 +434,11 @@
 				A10000000000000000000031 /* FitPlannerBackup.swift in Sources */,
 				A10000000000000000000035 /* ProgressMetric.swift in Sources */,
 				A10000000000000000000036 /* CalendarDaySummary.swift in Sources */,
+				A1000000000000000000003A /* WorkoutFocusType.swift in Sources */,
+				A1000000000000000000003B /* MuscleGroup.swift in Sources */,
+				A1000000000000000000003C /* EquipmentType.swift in Sources */,
+				A1000000000000000000003D /* TrainingStyle.swift in Sources */,
+				A1000000000000000000003E /* WorkoutGenerationPreference.swift in Sources */,
 				A1000000000000000000000C /* FitnessRepository.swift in Sources */,
 				A1000000000000000000000D /* InMemoryFitnessRepository.swift in Sources */,
 				A1000000000000000000002A /* JSONFitnessRepository.swift in Sources */,
@@ -437,6 +460,7 @@
 				A10000000000000000000018 /* WorkoutViewModel.swift in Sources */,
 				A10000000000000000000024 /* ExerciseLogEditorView.swift in Sources */,
 				A10000000000000000000025 /* SetLogRowView.swift in Sources */,
+				A1000000000000000000003F /* AddExerciseToWorkoutView.swift in Sources */,
 				A10000000000000000000026 /* WorkoutHistoryView.swift in Sources */,
 				A10000000000000000000027 /* WorkoutHistoryViewModel.swift in Sources */,
 				A10000000000000000000028 /* WorkoutHistoryDetailView.swift in Sources */,

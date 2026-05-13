@@ -92,7 +92,7 @@ final class ProgressSummaryService {
 
     func exercisePRMetrics(
         from records: [WorkoutSessionRecord],
-        exerciseNames: [String] = ["深蹲", "臥推", "硬舉", "肩推", "划船"]
+        exerciseNames: [String] = ["深蹲", "槓鈴臥推", "臥推", "羅馬尼亞硬舉", "硬舉", "肩推", "槓鈴划船", "划船"]
     ) -> [ExercisePRMetric] {
         var personalRecords: [String: ExercisePRMetric] = [:]
 

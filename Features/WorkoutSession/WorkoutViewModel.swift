@@ -15,9 +15,17 @@ final class WorkoutViewModel: ObservableObject {
     @Published private(set) var hasCompletedToday: Bool
     @Published var completionMessage: String?
     @Published private(set) var completionMessageStyle: WorkoutFeedbackStyle
+    @Published private(set) var selectedFocusType: WorkoutFocusType
+    @Published private(set) var selectedTrainingStyle: TrainingStyle
+    @Published private(set) var selectedEquipmentTypes: Set<EquipmentType>
+    @Published private(set) var availableExercises: [Exercise]
 
     private let fitnessService: FitnessService
     private let planGenerationService: PlanGenerationService
+
+    let availableFocusTypes: [WorkoutFocusType] = WorkoutFocusType.allCases
+    let availableTrainingStyles: [TrainingStyle] = TrainingStyle.allCases
+    let availableEquipmentTypes: [EquipmentType] = EquipmentType.allCases
 
     init(
         fitnessService: FitnessService,
@@ -30,15 +38,22 @@ final class WorkoutViewModel: ObservableObject {
         self.exerciseLogDrafts = []
         self.hasCompletedToday = false
         self.completionMessageStyle = .info
+        self.selectedFocusType = .recommended
+        self.selectedTrainingStyle = .hypertrophy
+        self.selectedEquipmentTypes = Set(EquipmentType.allCases)
+        self.availableExercises = fitnessService.exercises().sorted { $0.name < $1.name }
         refresh(rebuildDraft: true)
     }
 
     var canSaveWorkoutSession: Bool {
-        plannedWorkoutDay?.isRestDay == false && !hasCompletedToday && !exerciseLogDrafts.isEmpty
+        !hasCompletedToday && !exerciseLogDrafts.isEmpty
     }
 
     func refresh(rebuildDraft: Bool = false) {
-        let result = planGenerationService.generateNextWorkoutWithExplanation()
+        availableExercises = fitnessService.exercises().sorted { $0.name < $1.name }
+        let result = planGenerationService.generateNextWorkoutWithExplanation(
+            preference: currentPreference
+        )
         plannedWorkoutDay = result.plannedWorkoutDay
         planGenerationExplanation = result.explanation
         hasCompletedToday = fitnessService.hasCompletedWorkout()
@@ -50,6 +65,58 @@ final class WorkoutViewModel: ObservableObject {
 
     func plannedExercise(for exerciseID: UUID) -> PlannedExercise? {
         plannedWorkoutDay?.plannedExercises.first { $0.exercise.id == exerciseID }
+    }
+
+    func selectFocusType(_ focusType: WorkoutFocusType) {
+        selectedFocusType = focusType
+        completionMessage = nil
+    }
+
+    func selectTrainingStyle(_ trainingStyle: TrainingStyle) {
+        selectedTrainingStyle = trainingStyle
+        completionMessage = nil
+    }
+
+    func toggleEquipmentType(_ equipmentType: EquipmentType) {
+        if selectedEquipmentTypes.contains(equipmentType) {
+            selectedEquipmentTypes.remove(equipmentType)
+        } else {
+            selectedEquipmentTypes.insert(equipmentType)
+        }
+
+        completionMessage = nil
+    }
+
+    func isEquipmentSelected(_ equipmentType: EquipmentType) -> Bool {
+        selectedEquipmentTypes.contains(equipmentType)
+    }
+
+    func regenerateWorkout() {
+        refresh(rebuildDraft: true)
+        completionMessage = "已依照目前偏好重新產生課表。"
+        completionMessageStyle = .success
+    }
+
+    func addExercise(_ exercise: Exercise) {
+        guard !exerciseLogDrafts.contains(where: { $0.exercise.name == exercise.name }) else {
+            completionMessage = "「\(exercise.name)」已在今日訓練中。"
+            completionMessageStyle = .warning
+            return
+        }
+
+        exerciseLogDrafts.append(makeExerciseLogDraft(for: exercise))
+        completionMessage = "已加入「\(exercise.name)」。"
+        completionMessageStyle = .success
+    }
+
+    func removeExerciseLog(_ exerciseLogID: UUID) {
+        guard let exerciseLog = exerciseLogDrafts.first(where: { $0.id == exerciseLogID }) else {
+            return
+        }
+
+        exerciseLogDrafts.removeAll { $0.id == exerciseLogID }
+        completionMessage = "已移除「\(exerciseLog.exercise.name)」。"
+        completionMessageStyle = .info
     }
 
     func addSet(to exerciseLogID: UUID) {
@@ -118,12 +185,6 @@ final class WorkoutViewModel: ObservableObject {
     }
 
     func saveWorkoutSession() {
-        guard let plannedWorkoutDay, !plannedWorkoutDay.isRestDay else {
-            completionMessage = "今天沒有可儲存的訓練課表。"
-            completionMessageStyle = .warning
-            return
-        }
-
         guard !hasCompletedToday else {
             completionMessage = "本次訓練已經儲存。"
             completionMessageStyle = .info
@@ -137,7 +198,7 @@ final class WorkoutViewModel: ObservableObject {
         }
 
         let record = fitnessService.saveWorkoutSession(
-            title: plannedWorkoutDay.title,
+            title: plannedWorkoutDay?.title ?? selectedFocusType.displayName,
             exerciseLogs: exerciseLogDrafts
         )
         refresh(rebuildDraft: true)
@@ -181,5 +242,79 @@ final class WorkoutViewModel: ObservableObject {
                 isCompleted: setLog.isCompleted
             )
         }
+    }
+
+    private var currentPreference: WorkoutGenerationPreference {
+        WorkoutGenerationPreference(
+            focusType: selectedFocusType,
+            availableEquipment: Array(selectedEquipmentTypes),
+            trainingStyle: selectedTrainingStyle
+        )
+    }
+
+    private func makeExerciseLogDraft(for exercise: Exercise) -> ExerciseLog {
+        let latestLog = latestExerciseLog(for: exercise)
+        let templateSet = latestLog?.sets.last(where: \.isCompleted) ?? latestLog?.sets.last
+        let setCount = max(exercise.defaultSets, 1)
+        let reps = templateSet?.reps ?? repsForSelectedStyle(exercise.defaultReps)
+        let weight = templateSet?.weightInKilograms ?? defaultWeight(for: exercise)
+        let rpe = templateSet?.rpe ?? defaultRPEForSelectedStyle()
+        let rir = templateSet?.rir ?? defaultRIRForSelectedStyle()
+        let sets = (0..<setCount).map { index in
+            SetLog(
+                setNumber: index + 1,
+                weightInKilograms: weight,
+                reps: reps,
+                rpe: rpe,
+                rir: rir,
+                isCompleted: false
+            )
+        }
+
+        return ExerciseLog(
+            exercise: exercise,
+            sets: sets
+        )
+    }
+
+    private func latestExerciseLog(for exercise: Exercise) -> ExerciseLog? {
+        fitnessService.workoutRecords()
+            .sorted { $0.date > $1.date }
+            .flatMap(\.exerciseLogs)
+            .first { $0.exercise.name == exercise.name }
+    }
+
+    private func repsForSelectedStyle(_ defaultReps: Int) -> Int {
+        switch selectedTrainingStyle {
+        case .strength:
+            return min(max(defaultReps, 3), 6)
+        case .hypertrophy, .custom:
+            return min(max(defaultReps, 8), 12)
+        case .endurance:
+            return min(max(defaultReps, 12), 20)
+        case .recovery:
+            return min(max(defaultReps, 10), 15)
+        }
+    }
+
+    private func defaultWeight(for exercise: Exercise) -> Double {
+        let weight = ExerciseProgressionRule.defaultWeight(for: exercise.name)
+
+        switch selectedTrainingStyle {
+        case .recovery:
+            return max((weight * 0.6 * 2).rounded() / 2, 0)
+        case .endurance:
+            return max((weight * 0.8 * 2).rounded() / 2, 0)
+        default:
+            return weight
+        }
+    }
+
+    private func defaultRPEForSelectedStyle() -> Double {
+        selectedTrainingStyle == .recovery ? 6.5 : 8
+    }
+
+    private func defaultRIRForSelectedStyle() -> Int {
+        selectedTrainingStyle == .recovery ? 4 : 2
     }
 }

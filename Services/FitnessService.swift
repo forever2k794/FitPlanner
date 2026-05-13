@@ -19,6 +19,10 @@ final class FitnessService {
         repository.fetchWorkoutRecords()
     }
 
+    func exercises() -> [Exercise] {
+        repository.fetchExercises()
+    }
+
     func upsertWorkoutRecords(_ records: [WorkoutSessionRecord]) {
         repository.upsertWorkoutRecords(records)
     }

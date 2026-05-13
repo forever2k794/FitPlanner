@@ -32,11 +32,31 @@ final class PlanGenerationService {
         )
     }
 
+    func generateNextWorkout(preference: WorkoutGenerationPreference) -> PlannedWorkoutDay {
+        ruleBasedPlanGenerationService.generateNextWorkout(
+            profile: repository.fetchUserProfile(),
+            workoutRecords: repository.fetchWorkoutRecords(),
+            exercises: repository.fetchExercises(),
+            preference: preference
+        )
+    }
+
     func generateNextWorkoutWithExplanation() -> (plannedWorkoutDay: PlannedWorkoutDay, explanation: PlanGenerationExplanation) {
         ruleBasedPlanGenerationService.generateNextWorkoutWithExplanation(
             profile: repository.fetchUserProfile(),
             workoutRecords: repository.fetchWorkoutRecords(),
             exercises: repository.fetchExercises()
+        )
+    }
+
+    func generateNextWorkoutWithExplanation(
+        preference: WorkoutGenerationPreference
+    ) -> (plannedWorkoutDay: PlannedWorkoutDay, explanation: PlanGenerationExplanation) {
+        ruleBasedPlanGenerationService.generateNextWorkoutWithExplanation(
+            profile: repository.fetchUserProfile(),
+            workoutRecords: repository.fetchWorkoutRecords(),
+            exercises: repository.fetchExercises(),
+            preference: preference
         )
     }
 }

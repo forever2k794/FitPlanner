@@ -9,13 +9,16 @@ final class WorkoutHistoryDetailViewModel: ObservableObject {
     @Published private(set) var didSaveSuccessfully: Bool
 
     private let fitnessService: FitnessService
+    private let onSave: (() -> Void)?
 
     init(
         session: WorkoutSessionRecord,
-        fitnessService: FitnessService
+        fitnessService: FitnessService,
+        onSave: (() -> Void)? = nil
     ) {
         self.session = session
         self.fitnessService = fitnessService
+        self.onSave = onSave
         self.canEdit = fitnessService.canEditWorkoutRecord(id: session.id)
         self.saveMessage = nil
         self.didSaveSuccessfully = false
@@ -33,5 +36,6 @@ final class WorkoutHistoryDetailViewModel: ObservableObject {
         canEdit = fitnessService.canEditWorkoutRecord(id: updatedSession.id)
         saveMessage = "訓練紀錄已更新。"
         didSaveSuccessfully = true
+        onSave?()
     }
 }
