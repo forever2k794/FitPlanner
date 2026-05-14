@@ -71,8 +71,12 @@
 		A1000000000000000000003E /* WorkoutGenerationPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003E /* WorkoutGenerationPreference.swift */; };
 		A1000000000000000000003F /* AddExerciseToWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003F /* AddExerciseToWorkoutView.swift */; };
 		A10000000000000000000040 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000040 /* Assets.xcassets */; };
+		B10000000000000000000001 /* FitPlannerCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* FitPlannerCoreTests.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B80000000000000000000001 /* PBXContainerItemProxy */ = {isa = PBXContainerItemProxy; containerPortal = A80000000000000000000001 /* Project object */; proxyType = 1; remoteGlobalIDString = A50000000000000000000001; remoteInfo = FitPlanner; };
+/* End PBXContainerItemProxy section */
 /* Begin PBXFileReference section */
 		A20000000000000000000000 /* FitPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FitPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A20000000000000000000001 /* FitPlannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitPlannerApp.swift; sourceTree = "<group>"; };
@@ -139,10 +143,19 @@
 		A2000000000000000000003E /* WorkoutGenerationPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutGenerationPreference.swift; sourceTree = "<group>"; };
 		A2000000000000000000003F /* AddExerciseToWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddExerciseToWorkoutView.swift; sourceTree = "<group>"; };
 		A20000000000000000000040 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B20000000000000000000001 /* FitPlannerCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitPlannerCoreTests.swift; sourceTree = "<group>"; };
+		B20000000000000000000002 /* FitPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FitPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A30000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30000000000000000000001 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -163,6 +176,7 @@
 				A40000000000000000000007 /* Features */,
 				A4000000000000000000000C /* Shared */,
 				A20000000000000000000040 /* Assets.xcassets */,
+				B40000000000000000000001 /* FitPlannerTests */,
 				A40000000000000000000010 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -347,8 +361,17 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000000 /* FitPlanner.app */,
+				B20000000000000000000002 /* FitPlannerTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B40000000000000000000001 /* FitPlannerTests */ = {
+			isa = PBXGroup;
+			children = (
+				B20000000000000000000001 /* FitPlannerCoreTests.swift */,
+			);
+			path = FitPlannerTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -371,6 +394,24 @@
 			productReference = A20000000000000000000000 /* FitPlanner.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B50000000000000000000001 /* FitPlannerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B90000000000000000000003 /* Build configuration list for PBXNativeTarget "FitPlannerTests" */;
+			buildPhases = (
+				B70000000000000000000001 /* Sources */,
+				B30000000000000000000001 /* Frameworks */,
+				B60000000000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B81000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = FitPlannerTests;
+			productName = FitPlannerTests;
+			productReference = B20000000000000000000002 /* FitPlannerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -383,6 +424,10 @@
 				TargetAttributes = {
 					A50000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					B50000000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = A50000000000000000000001;
 					};
 				};
 			};
@@ -401,6 +446,7 @@
 			projectRoot = "";
 			targets = (
 				A50000000000000000000001 /* FitPlanner */,
+				B50000000000000000000001 /* FitPlannerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -411,6 +457,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000040 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B60000000000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,8 +540,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B70000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* FitPlannerCoreTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		B81000000000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = A50000000000000000000001 /* FitPlanner */; targetProxy = B80000000000000000000001 /* PBXContainerItemProxy */; };
+/* End PBXTargetDependency section */
 /* Begin XCBuildConfiguration section */
 		A90000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -659,6 +723,55 @@
 			};
 			name = Release;
 		};
+		B90000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.FitPlannerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitPlanner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitPlanner";
+			};
+			name = Debug;
+		};
+		B90000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.FitPlannerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitPlanner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitPlanner";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -676,6 +789,15 @@
 			buildConfigurations = (
 				A90000000000000000000005 /* Debug */,
 				A90000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B90000000000000000000003 /* Build configuration list for PBXNativeTarget "FitPlannerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B90000000000000000000001 /* Debug */,
+				B90000000000000000000002 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
