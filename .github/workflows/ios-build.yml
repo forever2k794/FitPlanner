@@ -39,12 +39,30 @@ jobs:
           DEVICE_LIST="$(xcrun simctl list devices available)"
           echo "$DEVICE_LIST"
 
-          DEVICE_NAME="$(printf '%s\n' "$DEVICE_LIST" | sed -nE 's/^[[:space:]]+(iPhone 16) \([A-Fa-f0-9-]+\) \(.*\)$/\1/p' | head -n 1)"
+          DEVICE_NAME="$(awk '
+            /^[[:space:]]+iPhone 16 \(/ { print "iPhone 16"; exit }
+          ' <<< "$DEVICE_LIST")"
           if [ -z "$DEVICE_NAME" ]; then
-            DEVICE_NAME="$(printf '%s\n' "$DEVICE_LIST" | sed -nE 's/^[[:space:]]+(iPhone 16[^()]*) \([A-Fa-f0-9-]+\) \(.*\)$/\1/p' | head -n 1 | sed 's/[[:space:]]*$//')"
+            DEVICE_NAME="$(awk '
+              /^[[:space:]]+iPhone 16[^()]*/ {
+                line=$0
+                sub(/^[[:space:]]+/, "", line)
+                sub(/[[:space:]]+\([A-Fa-f0-9-]+\).*/, "", line)
+                print line
+                exit
+              }
+            ' <<< "$DEVICE_LIST")"
           fi
           if [ -z "$DEVICE_NAME" ]; then
-            DEVICE_NAME="$(printf '%s\n' "$DEVICE_LIST" | sed -nE 's/^[[:space:]]+(iPhone [^()]*) \([A-Fa-f0-9-]+\) \(.*\)$/\1/p' | head -n 1 | sed 's/[[:space:]]*$//')"
+            DEVICE_NAME="$(awk '
+              /^[[:space:]]+iPhone [^()]*/ {
+                line=$0
+                sub(/^[[:space:]]+/, "", line)
+                sub(/[[:space:]]+\([A-Fa-f0-9-]+\).*/, "", line)
+                print line
+                exit
+              }
+            ' <<< "$DEVICE_LIST")"
           fi
           if [ -z "$DEVICE_NAME" ]; then
             echo "No available iPhone simulator found." >&2
