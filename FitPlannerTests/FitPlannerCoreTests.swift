@@ -1,5 +1,4 @@
 import XCTest
-@testable import FitPlanner
 
 final class FitPlannerCoreTests: XCTestCase {
     func testJSONRepositoryDeleteRemovesOnlyUserRecordAndKeepsMockHistoryOutOfJSON() throws {

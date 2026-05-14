@@ -72,6 +72,34 @@
 		A1000000000000000000003F /* AddExerciseToWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003F /* AddExerciseToWorkoutView.swift */; };
 		A10000000000000000000040 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000040 /* Assets.xcassets */; };
 		B10000000000000000000001 /* FitPlannerCoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* FitPlannerCoreTests.swift */; };
+		C10000000000000000000001 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* UserProfile.swift */; };
+		C10000000000000000000002 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* Exercise.swift */; };
+		C10000000000000000000003 /* WorkoutSessionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* WorkoutSessionRecord.swift */; };
+		C10000000000000000000004 /* ExerciseLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* ExerciseLog.swift */; };
+		C10000000000000000000005 /* SetLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* SetLog.swift */; };
+		C10000000000000000000006 /* GeneratedPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* GeneratedPlan.swift */; };
+		C10000000000000000000007 /* PlannedWorkoutDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* PlannedWorkoutDay.swift */; };
+		C10000000000000000000008 /* PlannedExercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* PlannedExercise.swift */; };
+		C10000000000000000000009 /* FitnessRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* FitnessRepository.swift */; };
+		C1000000000000000000000A /* InMemoryFitnessRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* InMemoryFitnessRepository.swift */; };
+		C1000000000000000000000B /* FitnessService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* FitnessService.swift */; };
+		C1000000000000000000000C /* MockExercises.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* MockExercises.swift */; };
+		C1000000000000000000000D /* MockUserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* MockUserProfile.swift */; };
+		C1000000000000000000000E /* MockWorkoutRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* MockWorkoutRecords.swift */; };
+		C1000000000000000000000F /* MockGeneratedPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* MockGeneratedPlan.swift */; };
+		C10000000000000000000010 /* Date+FitPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* Date+FitPlanner.swift */; };
+		C10000000000000000000011 /* LocalJSONWorkoutRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* LocalJSONWorkoutRecordStore.swift */; };
+		C10000000000000000000012 /* JSONFitnessRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* JSONFitnessRepository.swift */; };
+		C10000000000000000000013 /* LocalJSONUserProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002B /* LocalJSONUserProfileStore.swift */; };
+		C10000000000000000000014 /* WorkoutHistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* WorkoutHistoryViewModel.swift */; };
+		C10000000000000000000015 /* WorkoutHistoryDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000033 /* WorkoutHistoryDetailViewModel.swift */; };
+		C10000000000000000000016 /* TrainingSplitType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002D /* TrainingSplitType.swift */; };
+		C10000000000000000000017 /* ExerciseProgressionRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002E /* ExerciseProgressionRule.swift */; };
+		C10000000000000000000018 /* WorkoutFocusType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003A /* WorkoutFocusType.swift */; };
+		C10000000000000000000019 /* MuscleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003B /* MuscleGroup.swift */; };
+		C1000000000000000000001A /* EquipmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003C /* EquipmentType.swift */; };
+		C1000000000000000000001B /* TrainingStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003D /* TrainingStyle.swift */; };
+		C1000000000000000000001C /* WorkoutGenerationPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000003E /* WorkoutGenerationPreference.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -545,6 +573,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				B10000000000000000000001 /* FitPlannerCoreTests.swift in Sources */,
+				C10000000000000000000001 /* UserProfile.swift in Sources */,
+				C10000000000000000000002 /* Exercise.swift in Sources */,
+				C10000000000000000000003 /* WorkoutSessionRecord.swift in Sources */,
+				C10000000000000000000004 /* ExerciseLog.swift in Sources */,
+				C10000000000000000000005 /* SetLog.swift in Sources */,
+				C10000000000000000000006 /* GeneratedPlan.swift in Sources */,
+				C10000000000000000000007 /* PlannedWorkoutDay.swift in Sources */,
+				C10000000000000000000008 /* PlannedExercise.swift in Sources */,
+				C10000000000000000000009 /* FitnessRepository.swift in Sources */,
+				C1000000000000000000000A /* InMemoryFitnessRepository.swift in Sources */,
+				C1000000000000000000000B /* FitnessService.swift in Sources */,
+				C1000000000000000000000C /* MockExercises.swift in Sources */,
+				C1000000000000000000000D /* MockUserProfile.swift in Sources */,
+				C1000000000000000000000E /* MockWorkoutRecords.swift in Sources */,
+				C1000000000000000000000F /* MockGeneratedPlan.swift in Sources */,
+				C10000000000000000000010 /* Date+FitPlanner.swift in Sources */,
+				C10000000000000000000011 /* LocalJSONWorkoutRecordStore.swift in Sources */,
+				C10000000000000000000012 /* JSONFitnessRepository.swift in Sources */,
+				C10000000000000000000013 /* LocalJSONUserProfileStore.swift in Sources */,
+				C10000000000000000000014 /* WorkoutHistoryViewModel.swift in Sources */,
+				C10000000000000000000015 /* WorkoutHistoryDetailViewModel.swift in Sources */,
+				C10000000000000000000016 /* TrainingSplitType.swift in Sources */,
+				C10000000000000000000017 /* ExerciseProgressionRule.swift in Sources */,
+				C10000000000000000000018 /* WorkoutFocusType.swift in Sources */,
+				C10000000000000000000019 /* MuscleGroup.swift in Sources */,
+				C1000000000000000000001A /* EquipmentType.swift in Sources */,
+				C1000000000000000000001B /* TrainingStyle.swift in Sources */,
+				C1000000000000000000001C /* WorkoutGenerationPreference.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -726,7 +782,6 @@
 		B90000000000000000000001 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -744,14 +799,12 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitPlanner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitPlanner";
 			};
 			name = Debug;
 		};
 		B90000000000000000000002 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -768,7 +821,6 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FitPlanner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FitPlanner";
 			};
 			name = Release;
 		};
