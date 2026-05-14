@@ -36,6 +36,9 @@ final class WorkoutHistoryViewModel: ObservableObject {
             fitnessService: fitnessService,
             onSave: { [weak self] in
                 self?.refresh()
+            },
+            onDelete: { [weak self] in
+                self?.refresh()
             }
         )
     }

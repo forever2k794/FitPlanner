@@ -113,7 +113,14 @@ struct PlanCalendarView: View {
                 )
             } else {
                 ForEach(viewModel.selectedWorkoutRecords) { record in
-                    WorkoutDaySummaryCardView(record: record)
+                    NavigationLink {
+                        WorkoutHistoryDetailView(
+                            viewModel: viewModel.detailViewModel(for: record)
+                        )
+                    } label: {
+                        WorkoutDaySummaryCardView(record: record)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
 

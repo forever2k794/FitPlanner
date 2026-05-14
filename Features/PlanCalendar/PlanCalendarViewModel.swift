@@ -84,6 +84,19 @@ final class PlanCalendarViewModel: ObservableObject {
         refresh()
     }
 
+    func detailViewModel(for record: WorkoutSessionRecord) -> WorkoutHistoryDetailViewModel {
+        WorkoutHistoryDetailViewModel(
+            session: record,
+            fitnessService: fitnessService,
+            onSave: { [weak self] in
+                self?.refresh()
+            },
+            onDelete: { [weak self] in
+                self?.refresh()
+            }
+        )
+    }
+
     var selectedDateTitle: String {
         Self.selectedDateTitle(for: selectedDate)
     }

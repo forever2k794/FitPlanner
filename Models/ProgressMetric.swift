@@ -30,3 +30,20 @@ struct MuscleGroupFrequencyMetric: Identifiable, Hashable {
         muscleGroup
     }
 }
+
+struct ExerciseTrendMetric: Identifiable, Hashable {
+    let id: UUID
+    let date: Date
+    let label: String
+    let maxWeightInKilograms: Double
+    let maxReps: Int
+}
+
+struct TrainingFocusDistributionMetric: Identifiable, Hashable {
+    let focusName: String
+    let trainingCount: Int
+
+    var id: String {
+        focusName
+    }
+}

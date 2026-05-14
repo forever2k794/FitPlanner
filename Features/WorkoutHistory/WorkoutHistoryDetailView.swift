@@ -3,6 +3,7 @@ import SwiftUI
 
 struct WorkoutHistoryDetailView: View {
     @StateObject private var viewModel: WorkoutHistoryDetailViewModel
+    @Environment(\.dismiss) private var dismiss
 
     init(viewModel: WorkoutHistoryDetailViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -37,7 +38,7 @@ struct WorkoutHistoryDetailView: View {
         .navigationTitle("紀錄詳情")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
                 if viewModel.canEdit {
                     NavigationLink {
                         WorkoutSessionEditView(
@@ -49,6 +50,17 @@ struct WorkoutHistoryDetailView: View {
                     } label: {
                         Text("編輯")
                     }
+                }
+
+                if viewModel.canDelete {
+                    Button(role: .destructive) {
+                        if viewModel.deleteSession() {
+                            dismiss()
+                        }
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .accessibilityLabel("刪除訓練紀錄")
                 }
             }
         }
