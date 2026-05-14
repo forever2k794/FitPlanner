@@ -18,15 +18,77 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Show Xcode version
-        run: xcodebuild -version
+      - name: Show Xcode versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          xcode-select -p
+          ls -1 /Applications | grep -E '^Xcode.*\.app$' || true
+
+      - name: List schemes
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -list -project FitPlanner.xcodeproj
+
+      - name: Select iOS simulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEVICE_LIST="$(xcrun simctl list devices available)"
+          echo "$DEVICE_LIST"
+
+          DEVICE_NAME="$(printf '%s\n' "$DEVICE_LIST" | sed -nE 's/^[[:space:]]+(iPhone 16) \([A-Fa-f0-9-]+\) \(.*\)$/\1/p' | head -n 1)"
+          if [ -z "$DEVICE_NAME" ]; then
+            DEVICE_NAME="$(printf '%s\n' "$DEVICE_LIST" | sed -nE 's/^[[:space:]]+(iPhone 16[^()]*) \([A-Fa-f0-9-]+\) \(.*\)$/\1/p' | head -n 1 | sed 's/[[:space:]]*$//')"
+          fi
+          if [ -z "$DEVICE_NAME" ]; then
+            DEVICE_NAME="$(printf '%s\n' "$DEVICE_LIST" | sed -nE 's/^[[:space:]]+(iPhone [^()]*) \([A-Fa-f0-9-]+\) \(.*\)$/\1/p' | head -n 1 | sed 's/[[:space:]]*$//')"
+          fi
+          if [ -z "$DEVICE_NAME" ]; then
+            echo "No available iPhone simulator found." >&2
+            exit 1
+          fi
+
+          DESTINATION="platform=iOS Simulator,name=${DEVICE_NAME},OS=latest"
+          echo "Selected simulator: ${DESTINATION}"
+          echo "DESTINATION=${DESTINATION}" >> "$GITHUB_ENV"
 
       - name: Build for iOS Simulator
+        shell: bash
         run: |
+          set -euo pipefail
           xcodebuild \
             -project FitPlanner.xcodeproj \
             -scheme FitPlanner \
             -configuration Debug \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "$DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
-            build
+            clean build
+
+      - name: Detect test targets
+        id: tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q 'com.apple.product-type.bundle.unit-test' FitPlanner.xcodeproj/project.pbxproj; then
+            echo "has_tests=true" >> "$GITHUB_OUTPUT"
+            echo "Unit test target detected."
+          else
+            echo "has_tests=false" >> "$GITHUB_OUTPUT"
+            echo "No unit test target detected; skipping xcodebuild test."
+          fi
+
+      - name: Test on iOS Simulator
+        if: steps.tests.outputs.has_tests == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project FitPlanner.xcodeproj \
+            -scheme FitPlanner \
+            -configuration Debug \
+            -destination "$DESTINATION" \
+            CODE_SIGNING_ALLOWED=NO \
+            test
